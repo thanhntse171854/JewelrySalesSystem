@@ -14,27 +14,27 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @RestControllerAdvice
 public class RestExceptionHanlder extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(LoginException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    private ResponseEntity<BaseResponse<ExceptionResponse>> handleLoginException(
-            LoginException loginException) {
-        return new ResponseEntity<>(
-                BaseResponse.build(
-                        new ExceptionResponse(loginException.getErrorCode(), loginException.getMessage()),
-                        false),
-                HttpStatus.BAD_REQUEST);
-    }
+  @ExceptionHandler(LoginException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleLoginException(
+      LoginException loginException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(loginException.getErrorCode(), loginException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<BaseResponse<ExceptionResponse>> handleBadCredentialsException(
-            BadCredentialsException exception) {
-        return new ResponseEntity<>(
-                BaseResponse.build(
-                        new ExceptionResponse(
-                                ErrorCode.BAD_CREDENTIAL_LOGIN.getCode(),
-                                ErrorCode.BAD_CREDENTIAL_LOGIN.getMessage()),
-                        false),
-                HttpStatus.BAD_REQUEST);
-    }
+  @ExceptionHandler(BadCredentialsException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<BaseResponse<ExceptionResponse>> handleBadCredentialsException(
+      BadCredentialsException exception) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(
+                ErrorCode.BAD_CREDENTIAL_LOGIN.getCode(),
+                ErrorCode.BAD_CREDENTIAL_LOGIN.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
 }
