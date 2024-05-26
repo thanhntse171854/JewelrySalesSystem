@@ -30,14 +30,15 @@ public class ProductFacadeImpl implements ProductFacade {
     var result = productService.findByFilter(criteria);
     List<ProductResponse> response =
         result.getContent().stream().map(this::buildProductResponse).toList();
-    return BaseResponse.build(
-        PaginationResponse.build(response, result, criteria.getCurrentPage()), true);
+    int currentPage = (criteria.getCurrentPage() == null) ? 1 : criteria.getCurrentPage();
+    return BaseResponse.build(PaginationResponse.build(response, result, currentPage), true);
   }
 
   private ProductResponse buildProductResponse(Product product) {
     float diamondPrice = 0;
     float materialPrice = 0;
     float totalPrice = 0;
+    List<GemDTO> list = new ArrayList<>();
 
     boolean isNotDiamondProduct =
         !product.getCategory().getCategoryType().equals(CategoryType.DIAMOND);
@@ -52,13 +53,19 @@ public class ProductFacadeImpl implements ProductFacade {
       }
     }
 
-    if (isNotDiamondProduct) {
+    if (product.getIsGem()) list = getInformationGem(product);
+    boolean isGoldProduct = product.getCategory().getCategoryType().equals(CategoryType.GOLD);
+    if (isGoldProduct) {
       totalPrice =
-          diamondPrice
-              + materialPrice
+          materialPrice
               + product.getProductionCost()
               + (product.getGemCost() == null ? 0 : product.getGemCost());
+    } else {
+      float gemPrice = (float) list.stream().mapToDouble(GemDTO::getTotalPrice).sum();
+      totalPrice =
+          materialPrice + gemPrice + (product.getGemCost() == null ? 0 : product.getGemCost());
     }
+
     return ProductResponse.builder()
         .productId(product.getId())
         .productCode(product.getProductCode())
@@ -73,7 +80,7 @@ public class ProductFacadeImpl implements ProductFacade {
     Product product = productService.findByProductCodeAndActive(id);
 
     float materialPrice = 0;
-    float totalPrice = 0;
+    float totalPrice;
     Map<String, Float> materials = new HashMap<>();
     Map<Float, Long> size = new HashMap<>();
     List<GemDTO> list = new ArrayList<>();
@@ -98,18 +105,16 @@ public class ProductFacadeImpl implements ProductFacade {
     }
 
     if (product.getIsGem()) list = getInformationGem(product);
-
-    if (isNotDiamondProduct) {
+    boolean isGoldProduct = product.getCategory().getCategoryType().equals(CategoryType.GOLD);
+    if (isGoldProduct) {
       totalPrice =
           materialPrice
               + product.getProductionCost()
               + (product.getGemCost() == null ? 0 : product.getGemCost());
     } else {
-
+      float gemPrice = (float) list.stream().mapToDouble(GemDTO::getTotalPrice).sum();
       totalPrice =
-          materialPrice
-              + product.getProductionCost()
-              + (product.getGemCost() == null ? 0 : product.getGemCost());
+          materialPrice + gemPrice + (product.getGemCost() == null ? 0 : product.getGemCost());
     }
     return BaseResponse.build(
         ProductDetailResponse.builder()
@@ -180,9 +185,9 @@ public class ProductFacadeImpl implements ProductFacade {
               .cut(productGem.getGem().getCut())
               .origin(productGem.getGem().getOrigin())
               .priceSell(price)
-              .weight(productGem.getWeight())
+              .weight(productGem.getGem().getCarat())
               .quantity(quantity)
-              .totalPrice(price + product.getProductionCost())
+              .totalPrice((float) (price + product.getProductionCost()))
               .build());
     }
     return list;

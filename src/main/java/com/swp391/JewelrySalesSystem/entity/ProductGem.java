@@ -21,7 +21,4 @@ public class ProductGem extends BaseEntity implements Serializable {
   @ManyToOne
   @JoinColumn(name = "product_id")
   private Product product;
-
-  @Column(name = "weight")
-  private float weight;
 }

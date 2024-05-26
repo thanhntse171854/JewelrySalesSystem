@@ -20,5 +20,5 @@ public class GemDTO {
   private Long priceSell;
   private Float weight;
   private Long quantity;
-  private Long totalPrice;
+  private Float totalPrice;
 }

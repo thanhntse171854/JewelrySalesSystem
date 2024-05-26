@@ -12,8 +12,6 @@ import lombok.*;
 public class ProductCriteria extends BaseCriteria {
   private Integer currentPage;
   private Integer pageSize;
-  private Double minPrice;
-  private Double maxPrice;
   private Gender gender;
   private Long categoryId;
   private CategoryType categoryType;

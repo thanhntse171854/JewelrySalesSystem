@@ -42,10 +42,6 @@ public class Product extends BaseEntity implements Serializable {
   @JoinColumn(name = "category_id")
   private ProductCategory category;
 
-  @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  @JoinColumn(name = "guarantee", nullable = false, referencedColumnName = "id")
-  private Guarantee guarantee;
-
   @Column(name = "is_gem")
   private Boolean isGem;
 
