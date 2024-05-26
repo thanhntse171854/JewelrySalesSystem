@@ -18,3 +18,8 @@ spring:
     accessTokenExpirationTime: 3600000 # 1 hour
     #    accessTokenExpirationTime: 30000
     refreshTokenExpirationTime: 1209600000 # 2 weeks
+
+  cloudinary:
+    cloudName: dtgluqcbh
+    apiKey: 612934456157597
+    apiSecret: sJWkSTM4NgLz1DR5eir1qi0E23o

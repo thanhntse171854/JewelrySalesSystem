@@ -9,7 +9,6 @@ public enum RoleUser {
   ROLE_ADMIN("ROLE_ADMIN"),
   ROLE_MANAGER("ROLE_MANAGER"),
   ROLE_STAFF("ROLE_STAFF");
-
   private final String roleName;
 
   public static String getRoleName(String roleName) {
