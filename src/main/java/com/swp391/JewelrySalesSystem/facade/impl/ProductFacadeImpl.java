@@ -37,6 +37,7 @@ public class ProductFacadeImpl implements ProductFacade {
   }
 
   private ProductResponse buildProductResponse(Product product) {
+    float diamondPrice = 0;
     float materialPrice = 0;
     float totalPrice = 0;
     List<GemDTO> list = new ArrayList<>();
