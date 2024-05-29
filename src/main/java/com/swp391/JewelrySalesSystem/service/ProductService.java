@@ -5,7 +5,7 @@ import com.swp391.JewelrySalesSystem.request.ProductCriteria;
 import org.springframework.data.domain.Page;
 
 public interface ProductService {
-  Product findByProductCodeAndActive(String code);
+  Product findByProductIdAndActive(Long id);
 
   Page<Product> findByFilter(ProductCriteria criteria);
 }

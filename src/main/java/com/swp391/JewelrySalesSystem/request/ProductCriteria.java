@@ -15,4 +15,6 @@ public class ProductCriteria extends BaseCriteria {
   private Gender gender;
   private Long categoryId;
   private CategoryType categoryType;
+  private String productCode;
+  private boolean isActive = true;
 }

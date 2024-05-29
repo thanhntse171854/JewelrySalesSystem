@@ -37,12 +37,12 @@ public class ProductController {
     return this.productFacade.findByFilter(criteria);
   }
 
-  @GetMapping("/{code}")
+  @GetMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       summary = "Get product detail by product id",
       tags = {"Product APIs"})
-  public BaseResponse<ProductDetailResponse> getProductById(@PathVariable("code") String code) {
-    return this.productFacade.findById(code);
+  public BaseResponse<ProductDetailResponse> getProductById(@PathVariable("id") Long id) {
+    return this.productFacade.findById(id);
   }
 }

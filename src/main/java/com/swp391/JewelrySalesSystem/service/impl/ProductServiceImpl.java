@@ -20,9 +20,9 @@ public class ProductServiceImpl implements ProductService {
   private final ProductRepository productRepository;
 
   @Override
-  public Product findByProductCodeAndActive(String code) {
+  public Product findByProductIdAndActive(Long id) {
     return productRepository
-        .findByProductCodeAndIsActive(code, true)
+        .findByIdAndIsActive(id, true)
         .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND_OR_DELETED));
   }
 
@@ -45,6 +45,11 @@ public class ProductServiceImpl implements ProductService {
       specification =
           specification.and(ProductSpecifications.filterByCategoryType(criteria.getCategoryType()));
     }
+    if(criteria.getProductCode() != null) {
+      specification =
+              specification.and(ProductSpecifications.filterByProductCode(criteria.getProductCode()));
+    }
+
 
     return productRepository.findAll(specification, pageable);
   }

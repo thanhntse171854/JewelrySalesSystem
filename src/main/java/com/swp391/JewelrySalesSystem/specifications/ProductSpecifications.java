@@ -6,6 +6,7 @@ import com.swp391.JewelrySalesSystem.enums.CategoryType;
 import com.swp391.JewelrySalesSystem.enums.Gender;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
+import jdk.jshell.Snippet;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ProductSpecifications {
@@ -30,9 +31,19 @@ public class ProductSpecifications {
   }
 
   public static Specification<Product> filterByCategoryType(CategoryType categoryType) {
-    return (root, query, cb) -> {
+    return (root, query, criteriaBuilder) -> {
       Join<Product, ProductCategory> categoryJoin = root.join("category", JoinType.INNER);
-      return cb.equal(categoryJoin.get("categoryType"), categoryType);
+      return criteriaBuilder.equal(categoryJoin.get("categoryType"), categoryType);
     };
   }
+
+  public static Specification<Product> filterByProductCode(String productCode) {
+    return (root, query, criteriaBuilder) -> {
+      if (productCode == null || productCode.trim().isEmpty()) {
+        return null;
+      }
+      return criteriaBuilder.like(root.get("productCode"), "%" + productCode + "%");
+    };
+  }
+
 }

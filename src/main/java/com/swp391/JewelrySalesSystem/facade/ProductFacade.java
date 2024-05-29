@@ -9,7 +9,7 @@ public interface ProductFacade {
 
   BaseResponse<PaginationResponse<List<ProductResponse>>> findByFilter(ProductCriteria criteria);
 
-  BaseResponse<ProductDetailResponse> findById(String id);
+  BaseResponse<ProductDetailResponse> findById(Long id);
 
   BaseResponse<List<CategoryResponse>> getCategoriesByType(CategoryType categoryType);
 }

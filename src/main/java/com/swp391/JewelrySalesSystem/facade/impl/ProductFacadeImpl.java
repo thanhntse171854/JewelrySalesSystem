@@ -1,6 +1,8 @@
 package com.swp391.JewelrySalesSystem.facade.impl;
 
 import com.swp391.JewelrySalesSystem.dto.GemDTO;
+import com.swp391.JewelrySalesSystem.dto.MaterialDTO;
+import com.swp391.JewelrySalesSystem.dto.SizeDTO;
 import com.swp391.JewelrySalesSystem.entity.*;
 import com.swp391.JewelrySalesSystem.enums.CategoryType;
 import com.swp391.JewelrySalesSystem.facade.ProductFacade;
@@ -35,7 +37,6 @@ public class ProductFacadeImpl implements ProductFacade {
   }
 
   private ProductResponse buildProductResponse(Product product) {
-    float diamondPrice = 0;
     float materialPrice = 0;
     float totalPrice = 0;
     List<GemDTO> list = new ArrayList<>();
@@ -76,13 +77,13 @@ public class ProductFacadeImpl implements ProductFacade {
   }
 
   @Override
-  public BaseResponse<ProductDetailResponse> findById(String id) {
-    Product product = productService.findByProductCodeAndActive(id);
+  public BaseResponse<ProductDetailResponse> findById(Long id) {
+    Product product = productService.findByProductIdAndActive(id);
 
     float materialPrice = 0;
     float totalPrice;
-    Map<String, Float> materials = new HashMap<>();
-    Map<Float, Long> size = new HashMap<>();
+    List<MaterialDTO> materialDTOS = new ArrayList<>();
+    List<SizeDTO> size = new ArrayList<>();
     List<GemDTO> list = new ArrayList<>();
 
     boolean isNotDiamondProduct =
@@ -95,12 +96,12 @@ public class ProductFacadeImpl implements ProductFacade {
           float weight = getProductMaterialWeight(product, productM.getMaterial());
           long maxPrice = getMaxPriceForMaterial(productM.getMaterial());
           materialPrice += weight * maxPrice;
-          materials.put(productM.getMaterial().getName(), productM.getWeight());
+          materialDTOS.add(new MaterialDTO(productM.getMaterial().getId(),productM.getMaterial().getName(), weight));
         }
       }
 
       for (SizeProduct sizeProduct : productSize) {
-        size.put(sizeProduct.getSize().getSize(), sizeProduct.getQuantity());
+        size.add(new SizeDTO(sizeProduct.getSize().getId(), sizeProduct.getSize().getSize(), sizeProduct.getQuantity()));
       }
     }
 
@@ -126,7 +127,7 @@ public class ProductFacadeImpl implements ProductFacade {
             .productionCost(product.getProductionCost())
             .category(product.getCategory().getCategoryName())
             .sizeProducts(size)
-            .materials(materials)
+            .materials(materialDTOS)
             .totalPrice(totalPrice)
             .gem(list)
             .build(),

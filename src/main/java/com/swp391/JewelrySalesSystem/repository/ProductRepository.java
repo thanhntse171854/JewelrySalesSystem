@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface ProductRepository
     extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
 
-  Optional<Product> findByProductCodeAndIsActive(String code, boolean isActive);
+  Optional<Product> findByIdAndIsActive(Long id, boolean isActive);
 
   @Query("SELECT p FROM Product p")
   Page<Product> findByFilter(Pageable pageable);
