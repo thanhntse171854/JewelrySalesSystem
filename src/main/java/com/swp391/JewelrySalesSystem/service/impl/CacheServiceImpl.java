@@ -2,7 +2,6 @@ package com.swp391.JewelrySalesSystem.service.impl;
 
 import com.swp391.JewelrySalesSystem.request.PreOrderRequest;
 import com.swp391.JewelrySalesSystem.service.CacheService;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CacheServicempl implements CacheService {
+public class CacheServiceImpl implements CacheService {
 
   private final RedisTemplate<String, Object> redisTemplate;
 

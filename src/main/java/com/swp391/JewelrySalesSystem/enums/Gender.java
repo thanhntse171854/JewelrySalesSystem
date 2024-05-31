@@ -3,7 +3,6 @@ package com.swp391.JewelrySalesSystem.enums;
 public enum Gender {
   MALE,
   FEMALE,
-
   UNISEX;
 
   public boolean isMale() {

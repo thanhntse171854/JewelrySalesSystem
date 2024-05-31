@@ -2,13 +2,13 @@ package com.swp391.JewelrySalesSystem.enums;
 
 public enum PaymentMethod {
   CASH,
-  QR;
+  CREDIT;
 
   public boolean isCash() {
     return PaymentMethod.CASH == this;
   }
 
-  public boolean isQR() {
-    return PaymentMethod.QR == this;
+  public boolean isCredit() {
+    return PaymentMethod.CREDIT == this;
   }
 }

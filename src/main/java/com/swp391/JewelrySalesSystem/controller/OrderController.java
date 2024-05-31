@@ -5,11 +5,12 @@ import com.swp391.JewelrySalesSystem.request.OrderRequest;
 import com.swp391.JewelrySalesSystem.request.PreOrderRequest;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,6 +23,8 @@ public class OrderController {
   @Operation(
       summary = "Create new order",
       tags = {"Order APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("hasRole('ROLE_CASHIER_STAFF') and hasRole('ROLE_MANAGER')")
   public BaseResponse<Void> createOrder(@RequestBody OrderRequest request) {
     return this.orderFacade.orderProduct(request);
   }
@@ -31,6 +34,8 @@ public class OrderController {
   @Operation(
       summary = "Submit pre order",
       tags = {"Order APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("isAuthenticated()")
   public BaseResponse<Void> preOrder(@RequestBody PreOrderRequest request) {
     return this.orderFacade.preOrderProduct(request);
   }
@@ -40,6 +45,8 @@ public class OrderController {
   @Operation(
       summary = "Get pre order by Key",
       tags = {"Order APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("isAuthenticated()")
   public BaseResponse<PreOrderRequest> getPreOrder(@PathVariable("key") String key) {
     return this.orderFacade.getPreOrderProduct(key);
   }
@@ -49,16 +56,20 @@ public class OrderController {
   @Operation(
       summary = "Update pre order",
       tags = {"Order APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("isAuthenticated()")
   public BaseResponse<Void> updatePreOrder(
-      @RequestParam String key, @RequestBody PreOrderRequest updatedRequest) {
-    return this.orderFacade.updatePreOrderProduct(key, updatedRequest);
+      @RequestParam String key, @RequestBody PreOrderRequest request) {
+    return this.orderFacade.updatePreOrderProduct(key, request);
   }
 
   @GetMapping("/get-key-pre-order")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
-          summary = "Get key pre order",
-          tags = {"Order APIs"})
+      summary = "Get key pre order",
+      tags = {"Order APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("isAuthenticated()")
   public BaseResponse<List<String>> updatePreOrder() {
     return this.orderFacade.getAllKeyPreOrder();
   }

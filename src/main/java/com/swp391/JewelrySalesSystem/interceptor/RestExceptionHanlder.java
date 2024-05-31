@@ -55,12 +55,10 @@ public class RestExceptionHanlder extends ResponseEntityExceptionHandler {
   @ExceptionHandler(SizeException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   private ResponseEntity<BaseResponse<ExceptionResponse>> handleOTPException(
-          SizeException sizeException) {
+      SizeException sizeException) {
     return new ResponseEntity<>(
-            BaseResponse.build(
-                    new ExceptionResponse(
-                            sizeException.getErrorCode(), sizeException.getMessage()),
-                    false),
-            HttpStatus.BAD_REQUEST);
+        BaseResponse.build(
+            new ExceptionResponse(sizeException.getErrorCode(), sizeException.getMessage()), false),
+        HttpStatus.BAD_REQUEST);
   }
 }

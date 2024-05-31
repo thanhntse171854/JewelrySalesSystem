@@ -23,7 +23,7 @@ public class ProductServiceImpl implements ProductService {
   public Product findByProductIdAndActive(Long id) {
     return productRepository
         .findByIdAndIsActive(id, true)
-        .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND_OR_DELETED));
+        .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND_OR_DELETED));
   }
 
   @Override

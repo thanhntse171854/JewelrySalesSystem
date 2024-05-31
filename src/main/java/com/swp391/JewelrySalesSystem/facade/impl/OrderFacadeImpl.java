@@ -13,6 +13,7 @@ import com.swp391.JewelrySalesSystem.response.BaseResponse;
 import com.swp391.JewelrySalesSystem.service.*;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -89,7 +90,7 @@ public class OrderFacadeImpl implements OrderFacade {
     orderService.save(newOrder);
     paymentService.savePayment(
         Payment.builder()
-            .paymentCode("ABC")
+            .paymentCode("PM" + generatePaymentCode())
             .order(newOrder)
             .status(PaymentStatus.SUCCESS)
             .totalPrice(orderRequest.getTotalPrice())
@@ -131,5 +132,11 @@ public class OrderFacadeImpl implements OrderFacade {
   public BaseResponse<List<String>> getAllKeyPreOrder() {
     List<String> keys = cacheService.getAllKeys();
     return BaseResponse.build(keys, true);
+  }
+
+  private String generatePaymentCode() {
+    Random random = new Random();
+    int otp = random.nextInt(9999);
+    return String.format("%06d", otp);
   }
 }

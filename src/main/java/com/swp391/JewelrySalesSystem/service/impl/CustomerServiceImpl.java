@@ -3,6 +3,7 @@ package com.swp391.JewelrySalesSystem.service.impl;
 import com.swp391.JewelrySalesSystem.entity.Customer;
 import com.swp391.JewelrySalesSystem.repository.CustomerRepository;
 import com.swp391.JewelrySalesSystem.service.CustomerService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ public class CustomerServiceImpl implements CustomerService {
     return customerRepository.findByPhone(phone);
   }
 
+  @Transactional
   @Override
   public void save(Customer customer) {
     customerRepository.save(customer);
