@@ -30,7 +30,8 @@ public class SecurityConfig implements WebMvcConfigurer {
     "/swagger-ui.html",
     "/api/v1/location/**",
     "api/v1/products/**",
-    "/api/v1/prices/**"
+    "/api/v1/prices/**",
+    "/api/v1/orders/**"
   };
 
   private static final String[] PUBLIC_LIST = {"/api/v1/users/**"};

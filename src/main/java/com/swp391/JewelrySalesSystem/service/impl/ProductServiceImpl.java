@@ -45,11 +45,10 @@ public class ProductServiceImpl implements ProductService {
       specification =
           specification.and(ProductSpecifications.filterByCategoryType(criteria.getCategoryType()));
     }
-    if(criteria.getProductCode() != null) {
+    if (criteria.getProductCode() != null) {
       specification =
-              specification.and(ProductSpecifications.filterByProductCode(criteria.getProductCode()));
+          specification.and(ProductSpecifications.filterByProductCode(criteria.getProductCode()));
     }
-
 
     return productRepository.findAll(specification, pageable);
   }

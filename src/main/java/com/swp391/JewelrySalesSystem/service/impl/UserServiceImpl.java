@@ -28,6 +28,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public User findById(Long id) {
+    return userRepository
+        .findById(id)
+        .orElseThrow(() -> new LoginException(ErrorCode.ACCOUNT_NOT_FOUND));
+  }
+
+  @Override
   public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
     User user =
         userRepository

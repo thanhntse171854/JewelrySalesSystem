@@ -12,7 +12,8 @@ public enum ErrorCode {
   ENTITY_NOT_FOUND_OR_DELETED("1004", "Entity Not Found or Deleted"),
 
   //  Not found price list
-  GEM_PRICE_LIST_NOT_FOUND("1005", "Gem price list not found");
+  GEM_PRICE_LIST_NOT_FOUND("1005", "Gem price list not found"),
+  SIZE_NOT_FOUND("1006", "Product size does not exist or is out of stock");
 
   private final String code;
   private final String message;

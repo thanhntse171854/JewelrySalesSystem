@@ -155,16 +155,6 @@ CREATE TABLE "product_assets"
 );
 
 
-CREATE TABLE "guarantees"
-(
-    "id"             BIGSERIAL PRIMARY KEY NOT NULL,
-    "guarantee_name" varchar(100),
-    "guarantee_time" bigint,
-    "is_active"      boolean               NOT NULL DEFAULT true,
-    "created_at"     bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
-    "updated_at"     bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
-);
-
 CREATE TABLE "product_gem"
 (
     "id"         BIGSERIAL PRIMARY KEY NOT NULL,
@@ -203,13 +193,12 @@ CREATE TABLE "orders" (
                           "id" BIGSERIAL PRIMARY KEY NOT NULL,
                           "customer_id" bigint NOT NULL,
                           "staff_id" bigint NOT NULL,
-                          "product_order_id" bigint NOT NULL,
                           "total_amount" float NOT NULL,
                           "payment_status" varchar(50) NOT NULL,
                           "payment_method" varchar(50) NOT NULL,
                           "is_active"  boolean               NOT NULL DEFAULT true,
                           "created_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
-                          "updated_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric
+                          "updated_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
 );
 
 CREATE TABLE "guarantees" (
@@ -220,7 +209,7 @@ CREATE TABLE "guarantees" (
                               "order_detail_id" bigint,
                               "is_active"  boolean               NOT NULL DEFAULT true,
                               "created_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
-                              "updated_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric
+                              "updated_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
 );
 
 
@@ -230,7 +219,6 @@ CREATE TABLE "order_details" (
                                  "product_id" bigint NOT NULL,
                                  "size_id" bigint,
                                  "quantity" int NOT NULL DEFAULT 1,
-                                 "material_price" long NOT NULL,
                                  "is_active"  boolean               NOT NULL DEFAULT true,
                                  "created_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
                                  "updated_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
@@ -244,7 +232,7 @@ CREATE TABLE "customers" (
                              "total_amount_purchased" bigint,
                              "is_active"  boolean               NOT NULL DEFAULT true,
                              "created_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
-                             "updated_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric
+                             "updated_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
 );
 
 
@@ -256,8 +244,10 @@ CREATE TABLE "payments" (
                             "total_price" float,
                             "is_active"  boolean               NOT NULL DEFAULT true,
                             "created_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
-                            "updated_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric
+                            "updated_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
 );
+
+
 
 
 

@@ -12,9 +12,7 @@ import com.swp391.JewelrySalesSystem.service.PriceService;
 import com.swp391.JewelrySalesSystem.service.ProductCategoryService;
 import com.swp391.JewelrySalesSystem.service.ProductService;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -36,38 +34,24 @@ public class ProductFacadeImpl implements ProductFacade {
     return BaseResponse.build(PaginationResponse.build(response, result, currentPage), true);
   }
 
+  @Override
+  public BaseResponse<ProductDetailResponse> findById(Long id) {
+    Product product = productService.findByProductIdAndActive(id);
+    ProductDetailResponse productDetailResponse = buildProductDetailResponse(product);
+    return BaseResponse.build(productDetailResponse, true);
+  }
+
+  @Override
+  public BaseResponse<List<CategoryResponse>> getCategoriesByType(CategoryType categoryType) {
+    List<CategoryResponse> list =
+        productCategoryService.getCategoryByType(categoryType).stream()
+            .map(this::buildCategoryResponse)
+            .toList();
+    return BaseResponse.build(list, true);
+  }
+
   private ProductResponse buildProductResponse(Product product) {
-    float diamondPrice = 0;
-    float materialPrice = 0;
-    float totalPrice = 0;
-    List<GemDTO> list = new ArrayList<>();
-
-    boolean isNotDiamondProduct =
-        !product.getCategory().getCategoryType().equals(CategoryType.DIAMOND);
-    if (isNotDiamondProduct) {
-      var productMaterial = product.getProductMaterials();
-      if (product.getProductMaterials() != null) {
-        for (ProductMaterial productM : productMaterial) {
-          float weight = getProductMaterialWeight(product, productM.getMaterial());
-          long maxPrice = getMaxPriceForMaterial(productM.getMaterial());
-          materialPrice += weight * maxPrice;
-        }
-      }
-    }
-
-    if (product.getIsGem()) list = getInformationGem(product);
-    boolean isGoldProduct = product.getCategory().getCategoryType().equals(CategoryType.GOLD);
-    if (isGoldProduct) {
-      totalPrice =
-          materialPrice
-              + product.getProductionCost()
-              + (product.getGemCost() == null ? 0 : product.getGemCost());
-    } else {
-      float gemPrice = (float) list.stream().mapToDouble(GemDTO::getTotalPrice).sum();
-      totalPrice =
-          materialPrice + gemPrice + (product.getGemCost() == null ? 0 : product.getGemCost());
-    }
-
+    float totalPrice = calculateTotalPrice(product);
     return ProductResponse.builder()
         .productId(product.getId())
         .productCode(product.getProductCode())
@@ -77,81 +61,61 @@ public class ProductFacadeImpl implements ProductFacade {
         .build();
   }
 
-  @Override
-  public BaseResponse<ProductDetailResponse> findById(Long id) {
-    Product product = productService.findByProductIdAndActive(id);
+  private ProductDetailResponse buildProductDetailResponse(Product product) {
+    float totalPrice = calculateTotalPrice(product);
+    List<MaterialDTO> materialDTOS = buildMaterialDTOs(product);
+    List<SizeDTO> sizeDTOS = buildSizeDTOs(product);
+    List<GemDTO> gemDTOS = getInformationGem(product);
 
-    float materialPrice = 0;
-    float totalPrice;
-    List<MaterialDTO> materialDTOS = new ArrayList<>();
-    List<SizeDTO> size = new ArrayList<>();
-    List<GemDTO> list = new ArrayList<>();
+    return ProductDetailResponse.builder()
+        .id(product.getId())
+        .productCode(product.getProductCode())
+        .productName(product.getProductName())
+        .gender(product.getGender())
+        .gemCost(product.getGemCost())
+        .productionCost(product.getProductionCost())
+        .category(product.getCategory().getCategoryName())
+        .sizeProducts(sizeDTOS)
+        .materials(materialDTOS)
+        .totalPrice(totalPrice)
+        .gem(gemDTOS)
+        .build();
+  }
 
-    boolean isNotDiamondProduct =
-        !product.getCategory().getCategoryType().equals(CategoryType.DIAMOND);
-    if (isNotDiamondProduct) {
-      var productSize = product.getSizeProducts();
-      var productMaterial = product.getProductMaterials();
-      if (product.getProductMaterials() != null) {
-        for (ProductMaterial productM : productMaterial) {
-          float weight = getProductMaterialWeight(product, productM.getMaterial());
-          long maxPrice = getMaxPriceForMaterial(productM.getMaterial());
-          materialPrice += weight * maxPrice;
-          materialDTOS.add(new MaterialDTO(productM.getMaterial().getId(),productM.getMaterial().getName(), weight));
-        }
-      }
+  private CategoryResponse buildCategoryResponse(ProductCategory category) {
+    return CategoryResponse.builder()
+        .id(category.getId())
+        .categoryName(category.getCategoryName())
+        .categoryType(category.getCategoryType().toString())
+        .build();
+  }
 
-      for (SizeProduct sizeProduct : productSize) {
-        size.add(new SizeDTO(sizeProduct.getSize().getId(), sizeProduct.getSize().getSize(), sizeProduct.getQuantity()));
-      }
-    }
+  private float calculateTotalPrice(Product product) {
+    float materialPrice = calculateMaterialPrice(product);
+    float gemPrice =
+        product.getIsGem()
+            ? (float) getInformationGem(product).stream().mapToDouble(GemDTO::getTotalPrice).sum()
+            : 0;
+    float totalPrice =
+        materialPrice + gemPrice + (product.getGemCost() == null ? 0 : product.getGemCost());
 
-    if (product.getIsGem()) list = getInformationGem(product);
     boolean isGoldProduct = product.getCategory().getCategoryType().equals(CategoryType.GOLD);
     if (isGoldProduct) {
-      totalPrice =
-          materialPrice
-              + product.getProductionCost()
-              + (product.getGemCost() == null ? 0 : product.getGemCost());
-    } else {
-      float gemPrice = (float) list.stream().mapToDouble(GemDTO::getTotalPrice).sum();
-      totalPrice =
-          materialPrice + gemPrice + (product.getGemCost() == null ? 0 : product.getGemCost());
+      totalPrice += product.getProductionCost();
     }
-    return BaseResponse.build(
-        ProductDetailResponse.builder()
-            .id(product.getId())
-            .productCode(product.getProductCode())
-            .productName(product.getProductName())
-            .gender(product.getGender())
-            .gemCost(product.getGemCost())
-            .productionCost(product.getProductionCost())
-            .category(product.getCategory().getCategoryName())
-            .sizeProducts(size)
-            .materials(materialDTOS)
-            .totalPrice(totalPrice)
-            .gem(list)
-            .build(),
-        true);
+    return totalPrice;
   }
 
-  @Override
-  public BaseResponse<List<CategoryResponse>> getCategoriesByType(CategoryType categoryType) {
-    List<CategoryResponse> list = new ArrayList<>();
-    List<ProductCategory> categoryList = productCategoryService.getCategoryByType(categoryType);
-    for (ProductCategory category : categoryList) {
-      list.add(
-          CategoryResponse.builder()
-              .id(category.getId())
-              .categoryName(category.getCategoryName())
-              .categoryType(category.getCategoryType().toString())
-              .build());
-    }
-    return BaseResponse.build(list, true);
-  }
+  private float calculateMaterialPrice(Product product) {
+    boolean isDiamondProduct = product.getCategory().getCategoryType().equals(CategoryType.DIAMOND);
+    if (isDiamondProduct) return 0;
 
-  private Long getMaxPriceSellForGem(@NotNull Gem gem) {
-    return priceService.findGemPriceList(gem).getSellPrice();
+    return product.getProductMaterials().stream()
+        .map(
+            productM ->
+                getProductMaterialWeight(product, productM.getMaterial())
+                    * getMaxPriceForMaterial(productM.getMaterial()))
+        .reduce(0f, Float::sum);
   }
 
   private float getProductMaterialWeight(@NotNull Product product, Material material) {
@@ -163,35 +127,68 @@ public class ProductFacadeImpl implements ProductFacade {
     return 0;
   }
 
+  private List<MaterialDTO> buildMaterialDTOs(Product product) {
+    boolean isDiamondProduct = product.getCategory().getCategoryType().equals(CategoryType.DIAMOND);
+    if (isDiamondProduct) {
+      return new ArrayList<>();
+    }
+
+    return product.getProductMaterials().stream()
+        .map(
+            productM ->
+                new MaterialDTO(
+                    productM.getMaterial().getId(),
+                    productM.getMaterial().getName(),
+                    getProductMaterialWeight(product, productM.getMaterial())))
+        .toList();
+  }
+
+  private List<SizeDTO> buildSizeDTOs(Product product) {
+    boolean isDiamondProduct = product.getCategory().getCategoryType().equals(CategoryType.DIAMOND);
+    if (isDiamondProduct) return new ArrayList<>();
+
+    return product.getSizeProducts().stream()
+        .map(
+            sizeProduct ->
+                new SizeDTO(
+                    sizeProduct.getSize().getId(),
+                    sizeProduct.getSize().getSize(),
+                    sizeProduct.getQuantity()))
+        .toList();
+  }
+
+  private Long getMaxPriceSellForGem(@NotNull Gem gem) {
+    return priceService.findGemPriceList(gem).getSellPrice();
+  }
+
   private long getMaxPriceForMaterial(@NotNull Material material) {
     return priceService.findMaterialPriceList(material.getId()).getSellPrice();
   }
 
   private List<GemDTO> getInformationGem(Product product) {
-    List<GemDTO> list = new ArrayList<>();
-    for (ProductGem productGem : product.getProductGems()) {
-      Long price = getMaxPriceSellForGem(productGem.getGem());
-      Long quantity = 0L;
+    return product.getProductGems().stream()
+        .map(
+            productGem -> {
+              Long price = getMaxPriceSellForGem(productGem.getGem());
+              Long quantity =
+                  product.getCategory().getCategoryType().equals(CategoryType.DIAMOND)
+                      ? productGem.getGem().getQuantity()
+                      : 0L;
 
-      if (product.getCategory().getCategoryType().equals(CategoryType.DIAMOND)) {
-        quantity = productGem.getGem().getQuantity();
-      }
-
-      list.add(
-          GemDTO.builder()
-              .id(productGem.getGem().getId())
-              .gemName(productGem.getGem().getGemName())
-              .gemCode(productGem.getGem().getGemCode())
-              .color(productGem.getGem().getColor())
-              .clarity(productGem.getGem().getClarity())
-              .cut(productGem.getGem().getCut())
-              .origin(productGem.getGem().getOrigin())
-              .priceSell(price)
-              .weight(productGem.getGem().getCarat())
-              .quantity(quantity)
-              .totalPrice((float) (price + product.getProductionCost()))
-              .build());
-    }
-    return list;
+              return GemDTO.builder()
+                  .id(productGem.getGem().getId())
+                  .gemName(productGem.getGem().getGemName())
+                  .gemCode(productGem.getGem().getGemCode())
+                  .color(productGem.getGem().getColor())
+                  .clarity(productGem.getGem().getClarity())
+                  .cut(productGem.getGem().getCut())
+                  .origin(productGem.getGem().getOrigin())
+                  .priceSell(price)
+                  .weight(productGem.getGem().getCarat())
+                  .quantity(quantity)
+                  .totalPrice((float) (price + product.getProductionCost()))
+                  .build();
+            })
+        .toList();
   }
 }

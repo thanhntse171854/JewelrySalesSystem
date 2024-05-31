@@ -1,5 +1,9 @@
 server:
   port: 8080
+rabbitmq:
+  name: orderQueue
+  exchangeName: orderExchange
+  mailRoutingKey: orderRoutingKey
 
 
 spring:
@@ -23,3 +27,22 @@ spring:
     cloudName: dtgluqcbh
     apiKey: 612934456157597
     apiSecret: sJWkSTM4NgLz1DR5eir1qi0E23o
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+  vnpay:
+    pay-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+    return-url: http://localhost:8080/vnpay_jsp/vnpay_return
+    tmn-code: GWI0ZEDX
+    hash-secret: 7YUKJOWXRG4X8WM8SOB64VWUCHMI6DF6
+    api-url: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction
+    version: 2.1.0
+    command: pay
+    order-type: other

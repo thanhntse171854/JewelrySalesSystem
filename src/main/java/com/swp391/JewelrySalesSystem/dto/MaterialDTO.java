@@ -5,13 +5,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class MaterialDTO {
-    private Long id;
-    private String name;
-    private float weight;
+  private Long id;
+  private String name;
+  private float weight;
 }

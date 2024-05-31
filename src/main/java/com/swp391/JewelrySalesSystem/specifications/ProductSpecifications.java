@@ -6,7 +6,6 @@ import com.swp391.JewelrySalesSystem.enums.CategoryType;
 import com.swp391.JewelrySalesSystem.enums.Gender;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
-import jdk.jshell.Snippet;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ProductSpecifications {
@@ -45,5 +44,4 @@ public class ProductSpecifications {
       return criteriaBuilder.like(root.get("productCode"), "%" + productCode + "%");
     };
   }
-
 }
