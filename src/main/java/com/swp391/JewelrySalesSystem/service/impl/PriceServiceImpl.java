@@ -19,7 +19,9 @@ public class PriceServiceImpl implements PriceService {
 
   @Override
   public MaterialPriceList findMaterialPriceList(Long materialId) {
-    return materialPriceRepository.findMaterialPriceList(materialId, System.currentTimeMillis());
+    return materialPriceRepository
+        .findMaterialPriceList(materialId, System.currentTimeMillis())
+        .orElseThrow(() -> new PriceListException(ErrorCode.MATERIAL_PRICE_LIST_NOT_FOUND));
   }
 
   @Override

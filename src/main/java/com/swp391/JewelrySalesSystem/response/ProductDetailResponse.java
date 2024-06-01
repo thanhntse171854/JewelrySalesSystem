@@ -5,7 +5,6 @@ import com.swp391.JewelrySalesSystem.dto.MaterialDTO;
 import com.swp391.JewelrySalesSystem.dto.SizeDTO;
 import com.swp391.JewelrySalesSystem.enums.Gender;
 import java.util.List;
-import java.util.Map;
 import lombok.*;
 
 @Getter

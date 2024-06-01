@@ -1,0 +1,50 @@
+package com.swp391.JewelrySalesSystem.entity;
+
+import jakarta.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "customers")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Builder
+public class Customer extends BaseEntity implements Serializable {
+  @Column(name = "customer_name", nullable = false)
+  private String name;
+
+  @Column(name = "phone", nullable = false, unique = true)
+  private String phone;
+
+  @Column(name = "percent_discount")
+  private Float percentDiscount;
+
+  @Column(name = "total_amount_purchased")
+  private Long totalAmountPurchased;
+
+  @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<Orders> orders = new ArrayList<>();
+
+  public void updateDiscount(Long total) {
+    if (total >= 15000) {
+      this.percentDiscount = 15.0f;
+    } else if (total >= 10000) {
+      this.percentDiscount = 10.0f;
+    } else if (total >= 5000) {
+      this.percentDiscount = 5.0f;
+    } else {
+      this.percentDiscount = 0.0f;
+    }
+  }
+
+  public void updateTotalAmountPurchase(Long totalAmountPurchased) {
+    this.totalAmountPurchased = totalAmountPurchased;
+  }
+}

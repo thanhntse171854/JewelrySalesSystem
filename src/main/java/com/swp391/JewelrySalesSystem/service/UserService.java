@@ -5,4 +5,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService extends UserDetailsService {
   User findByPhone(String phone);
+
+  User findById(Long id);
 }

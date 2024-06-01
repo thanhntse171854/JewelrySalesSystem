@@ -3,6 +3,7 @@ package com.swp391.JewelrySalesSystem.interceptor;
 import com.swp391.JewelrySalesSystem.enums.ErrorCode;
 import com.swp391.JewelrySalesSystem.exception.EntityNotFoundException;
 import com.swp391.JewelrySalesSystem.exception.LoginException;
+import com.swp391.JewelrySalesSystem.exception.SizeException;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
 import com.swp391.JewelrySalesSystem.response.ExceptionResponse;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,16 @@ public class RestExceptionHanlder extends ResponseEntityExceptionHandler {
                 ErrorCode.BAD_CREDENTIAL_LOGIN.getCode(),
                 ErrorCode.BAD_CREDENTIAL_LOGIN.getMessage()),
             false),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(SizeException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleOTPException(
+      SizeException sizeException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(sizeException.getErrorCode(), sizeException.getMessage()), false),
         HttpStatus.BAD_REQUEST);
   }
 }

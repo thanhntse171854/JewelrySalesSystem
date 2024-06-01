@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class TokenServiceImpl implements TokenService {
   private final TokenRepository tokenRepository;
 
+  @Transactional
   @Override
   public void saveRefreshToken(String refreshToken, User user) {
     RefreshToken token = RefreshToken.builder().user(user).refreshToken(refreshToken).build();

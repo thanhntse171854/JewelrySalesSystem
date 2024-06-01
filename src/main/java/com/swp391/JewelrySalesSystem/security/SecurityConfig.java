@@ -25,12 +25,7 @@ public class SecurityConfig implements WebMvcConfigurer {
   private final JWTService jwtService;
 
   private static final String[] WHITE_LIST = {
-    "/v3/api-docs/**",
-    "/swagger-ui/**",
-    "/swagger-ui.html",
-    "/api/v1/location/**",
-    "api/v1/products/**",
-    "/api/v1/prices/**"
+    "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"
   };
 
   private static final String[] PUBLIC_LIST = {"/api/v1/users/**"};

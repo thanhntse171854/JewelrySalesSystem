@@ -23,7 +23,7 @@ public class ProductServiceImpl implements ProductService {
   public Product findByProductIdAndActive(Long id) {
     return productRepository
         .findByIdAndIsActive(id, true)
-        .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND_OR_DELETED));
+        .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND_OR_DELETED));
   }
 
   @Override
@@ -45,11 +45,10 @@ public class ProductServiceImpl implements ProductService {
       specification =
           specification.and(ProductSpecifications.filterByCategoryType(criteria.getCategoryType()));
     }
-    if(criteria.getProductCode() != null) {
+    if (criteria.getProductCode() != null) {
       specification =
-              specification.and(ProductSpecifications.filterByProductCode(criteria.getProductCode()));
+          specification.and(ProductSpecifications.filterByProductCode(criteria.getProductCode()));
     }
-
 
     return productRepository.findAll(specification, pageable);
   }

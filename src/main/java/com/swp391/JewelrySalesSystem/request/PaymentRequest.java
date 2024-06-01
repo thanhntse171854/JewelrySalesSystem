@@ -1,16 +1,16 @@
-package com.swp391.JewelrySalesSystem.dto;
+package com.swp391.JewelrySalesSystem.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SizeDTO {
-  private Long id;
-  private float size;
-  private float diameter;
+public class PaymentRequest {
+  private Long amount;
+  private Long orderId;
+  private Long customerId;
 }
