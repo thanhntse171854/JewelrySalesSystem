@@ -4,6 +4,7 @@ import com.swp391.JewelrySalesSystem.entity.Orders;
 import com.swp391.JewelrySalesSystem.repository.OrderRepository;
 import com.swp391.JewelrySalesSystem.service.OrderService;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,5 +18,10 @@ public class OrderServiceImpl implements OrderService {
   @Transactional
   public void save(Orders orders) {
     orderRepository.save(orders);
+  }
+
+  @Override
+  public List<Orders> getAllHistoryOrder() {
+    return orderRepository.findAll();
   }
 }

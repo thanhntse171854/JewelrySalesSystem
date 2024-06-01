@@ -119,7 +119,7 @@ CREATE TABLE "gem_price_list"
     "carat"       float                 NOT NULL,
     "buy_price"   bigint                NOT NULL,
     "sell_price"  bigint                NOT NULL,
-    "effect_date" bigint             NOT NULL,
+    "effect_date" bigint                NOT NULL,
 
     "is_active"   boolean               NOT NULL DEFAULT true,
     "created_at"  bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
@@ -188,63 +188,67 @@ CREATE TABLE "size_products"
 
 
 
-
-CREATE TABLE "orders" (
-                          "id" BIGSERIAL PRIMARY KEY NOT NULL,
-                          "customer_id" bigint NOT NULL,
-                          "staff_id" bigint NOT NULL,
-                          "total_amount" float NOT NULL,
-                          "payment_status" varchar(50) NOT NULL,
-                          "payment_method" varchar(50) NOT NULL,
-                          "is_active"  boolean               NOT NULL DEFAULT true,
-                          "created_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
-                          "updated_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
+CREATE TABLE "orders"
+(
+    "id"             BIGSERIAL PRIMARY KEY NOT NULL,
+    "customer_id"    bigint                NOT NULL,
+    "staff_id"       bigint                NOT NULL,
+    "total_amount"   float                 NOT NULL,
+    "payment_status" varchar(50)           NOT NULL,
+    "payment_method" varchar(50)           NOT NULL,
+    "is_active"      boolean               NOT NULL DEFAULT true,
+    "created_at"     bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
+    "updated_at"     bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
 );
 
-CREATE TABLE "guarantees" (
-                              "id" BIGSERIAL PRIMARY KEY NOT NULL,
-                              "guarantee_name" varchar(100),
-                              "guarantee_from" bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
-                              "guarantee_to" timestamp,
-                              "order_detail_id" bigint,
-                              "is_active"  boolean               NOT NULL DEFAULT true,
-                              "created_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
-                              "updated_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
-);
-
-
-CREATE TABLE "order_details" (
-                                 "id" BIGSERIAL PRIMARY KEY NOT NULL,
-                                 "order_id" bigint NOT NULL,
-                                 "product_id" bigint NOT NULL,
-                                 "size_id" bigint,
-                                 "quantity" int NOT NULL DEFAULT 1,
-                                 "is_active"  boolean               NOT NULL DEFAULT true,
-                                 "created_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
-                                 "updated_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
-);
-
-CREATE TABLE "customers" (
-                             "id" BIGSERIAL PRIMARY KEY NOT NULL,
-                             "customer_name" varchar(255) NOT NULL,
-                             "phone" varchar(20) UNIQUE NOT NULL,
-                             "percent_discount" float,
-                             "total_amount_purchased" bigint,
-                             "is_active"  boolean               NOT NULL DEFAULT true,
-                             "created_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
-                             "updated_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
+CREATE TABLE "guarantees"
+(
+    "id"              BIGSERIAL PRIMARY KEY NOT NULL,
+    "guarantee_name"  varchar(100),
+    "guarantee_from"  bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
+    "guarantee_to"    timestamp,
+    "order_detail_id" bigint,
+    "is_active"       boolean               NOT NULL DEFAULT true,
+    "created_at"      bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
+    "updated_at"      bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
 );
 
 
-CREATE TABLE "payments" (
-                            "id" BIGSERIAL PRIMARY KEY NOT NULL,
-                            "payment_code" varchar(100) NOT NULL,
-                            "order_id" bigint NOT NULL,
-                            "status" varchar,
-                            "total_price" float,
-                            "is_active"  boolean               NOT NULL DEFAULT true,
-                            "created_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
-                            "updated_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
+CREATE TABLE "order_details"
+(
+    "id"         BIGSERIAL PRIMARY KEY NOT NULL,
+    "order_id"   bigint                NOT NULL,
+    "product_id" bigint                NOT NULL,
+    "size_id"    bigint,
+    "quantity"   int                   NOT NULL DEFAULT 1,
+    "is_active"  boolean               NOT NULL DEFAULT true,
+    "created_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
+    "updated_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
+);
+
+CREATE TABLE "customers"
+(
+    "id"                     BIGSERIAL PRIMARY KEY NOT NULL,
+    "customer_name"          varchar(255)          NOT NULL,
+    "phone"                  varchar(20) UNIQUE    NOT NULL,
+    "percent_discount"       float,
+    "total_amount_purchased" bigint,
+    "is_active"              boolean               NOT NULL DEFAULT true,
+    "created_at"             bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
+    "updated_at"             bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
+);
+
+
+CREATE TABLE "payments"
+(
+    "id"           BIGSERIAL PRIMARY KEY NOT NULL,
+    "payment_code" varchar(100)          NOT NULL,
+    "order_id"     bigint                NOT NULL,
+    "status"       varchar,
+    "total_price"  float,
+    "is_active"    boolean               NOT NULL DEFAULT true,
+    "created_at"   bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
+    "updated_at"   bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
 );
 
 

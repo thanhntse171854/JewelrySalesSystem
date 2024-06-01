@@ -12,5 +12,6 @@ import lombok.*;
 public class PreOrderRequest implements Serializable {
   private Long staffId;
   private String customer;
-  private List<ProductOrder> orderList;
+  private List<ProductPreOrderRequest> orderList;
+  private Float totalPrice;
 }

@@ -10,7 +10,9 @@ import com.swp391.JewelrySalesSystem.facade.OrderFacade;
 import com.swp391.JewelrySalesSystem.request.OrderRequest;
 import com.swp391.JewelrySalesSystem.request.PreOrderRequest;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
+import com.swp391.JewelrySalesSystem.response.OrderHistoryResponse;
 import com.swp391.JewelrySalesSystem.service.*;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
@@ -132,6 +134,23 @@ public class OrderFacadeImpl implements OrderFacade {
   public BaseResponse<List<String>> getAllKeyPreOrder() {
     List<String> keys = cacheService.getAllKeys();
     return BaseResponse.build(keys, true);
+  }
+
+  @Override
+  public BaseResponse<List<OrderHistoryResponse>> getAllHistoryOrder() {
+    List<Orders> list = orderService.getAllHistoryOrder();
+    List<OrderHistoryResponse> orderHistoryResponses = new ArrayList<>();
+    for (Orders listOrder : list) {
+      orderHistoryResponses.add(
+          OrderHistoryResponse.builder()
+              .orderId(listOrder.getId())
+              .salesStaffName(listOrder.getUser().getName())
+              .totalPrice(listOrder.getTotalAmount())
+              .paymentStatus(listOrder.getPaymentStatus())
+              .dateOrder(listOrder.getCreatedAt())
+              .build());
+    }
+    return BaseResponse.build(orderHistoryResponses, true);
   }
 
   private String generatePaymentCode() {

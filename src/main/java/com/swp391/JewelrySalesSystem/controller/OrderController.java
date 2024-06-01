@@ -4,6 +4,7 @@ import com.swp391.JewelrySalesSystem.facade.OrderFacade;
 import com.swp391.JewelrySalesSystem.request.OrderRequest;
 import com.swp391.JewelrySalesSystem.request.PreOrderRequest;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
+import com.swp391.JewelrySalesSystem.response.OrderHistoryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
@@ -22,7 +23,7 @@ public class OrderController {
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       summary = "Create new order",
-      tags = {"Order APIs"})
+      tags = {"Sales Order APIs"})
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("hasRole('ROLE_CASHIER_STAFF') and hasRole('ROLE_MANAGER')")
   public BaseResponse<Void> createOrder(@RequestBody OrderRequest request) {
@@ -33,18 +34,18 @@ public class OrderController {
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       summary = "Submit pre order",
-      tags = {"Order APIs"})
+      tags = {"Sales Order APIs"})
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<Void> preOrder(@RequestBody PreOrderRequest request) {
     return this.orderFacade.preOrderProduct(request);
   }
 
-  @PostMapping("/get-pre-order-product/{key}")
+  @GetMapping("/get-pre-order-product/{key}")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       summary = "Get pre order by Key",
-      tags = {"Order APIs"})
+      tags = {"Sales Order APIs"})
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<PreOrderRequest> getPreOrder(@PathVariable("key") String key) {
@@ -55,7 +56,7 @@ public class OrderController {
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       summary = "Update pre order",
-      tags = {"Order APIs"})
+      tags = {"Sales Order APIs"})
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<Void> updatePreOrder(
@@ -67,10 +68,21 @@ public class OrderController {
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       summary = "Get key pre order",
-      tags = {"Order APIs"})
+      tags = {"Sales Order APIs"})
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<List<String>> updatePreOrder() {
     return this.orderFacade.getAllKeyPreOrder();
+  }
+
+  @GetMapping("/get-all-history-order")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Get all history order",
+      tags = {"Sales Order APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("isAuthenticated()")
+  public BaseResponse<List<OrderHistoryResponse>> getAllHistoryOrder() {
+    return this.orderFacade.getAllHistoryOrder();
   }
 }

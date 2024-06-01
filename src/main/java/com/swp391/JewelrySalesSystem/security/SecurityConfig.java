@@ -28,7 +28,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"
   };
 
-  private static final String[] PUBLIC_LIST = {"/api/v1/users/login"};
+  private static final String[] PUBLIC_LIST = {"/api/v1/users/**"};
 
   public SecurityConfig(UserService userService, JWTService jwtService) {
     this.userService = userService;

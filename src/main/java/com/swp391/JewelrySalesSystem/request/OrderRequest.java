@@ -13,7 +13,7 @@ public class OrderRequest {
   private Long staffId;
   private String phone;
   private String name;
-  private List<ProductOrder> orderList;
+  private List<ProductOrderRequest> orderList;
   private PaymentMethod paymentMethod;
   private Float discount;
   private Float totalPrice;
