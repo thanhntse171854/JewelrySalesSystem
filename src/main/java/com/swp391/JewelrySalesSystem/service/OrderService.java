@@ -7,4 +7,6 @@ public interface OrderService {
   void save(Orders orders);
 
   List<Orders> getAllHistoryOrder();
+
+  Orders findOrderByPhoneAndId(Long orderId, String phone);
 }

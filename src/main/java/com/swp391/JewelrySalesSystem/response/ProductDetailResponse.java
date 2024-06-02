@@ -20,6 +20,7 @@ public class ProductDetailResponse {
   private Long productionCost;
   private Gender gender;
   private String category;
+  private ProductAssetResponse productAsset;
   private List<MaterialDTO> materials;
   private List<SizeDTO> sizeProducts;
   private Float totalPrice;

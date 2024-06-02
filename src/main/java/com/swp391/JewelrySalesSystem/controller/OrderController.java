@@ -23,40 +23,40 @@ public class OrderController {
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       summary = "Create new order",
-      tags = {"Sales Order APIs"})
+      tags = {"Sell Order APIs"})
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("hasRole('ROLE_CASHIER_STAFF') and hasRole('ROLE_MANAGER')")
   public BaseResponse<Void> createOrder(@RequestBody OrderRequest request) {
     return this.orderFacade.orderProduct(request);
   }
 
-  @PostMapping("/pre-order-product")
+  @PostMapping("/pre-order-products")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       summary = "Submit pre order",
-      tags = {"Sales Order APIs"})
+      tags = {"Sell Order APIs"})
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<Void> preOrder(@RequestBody PreOrderRequest request) {
     return this.orderFacade.preOrderProduct(request);
   }
 
-  @GetMapping("/get-pre-order-product/{key}")
+  @GetMapping("/pre-order-product/{key}")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       summary = "Get pre order by Key",
-      tags = {"Sales Order APIs"})
+      tags = {"Sell Order APIs"})
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<PreOrderRequest> getPreOrder(@PathVariable("key") String key) {
     return this.orderFacade.getPreOrderProduct(key);
   }
 
-  @PutMapping("/update-pre-order")
+  @PutMapping("/pre-order")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       summary = "Update pre order",
-      tags = {"Sales Order APIs"})
+      tags = {"Sell Order APIs"})
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<Void> updatePreOrder(
@@ -64,22 +64,22 @@ public class OrderController {
     return this.orderFacade.updatePreOrderProduct(key, request);
   }
 
-  @GetMapping("/get-key-pre-order")
+  @GetMapping("/key-pre-order")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       summary = "Get key pre order",
-      tags = {"Sales Order APIs"})
+      tags = {"Sell Order APIs"})
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<List<String>> updatePreOrder() {
     return this.orderFacade.getAllKeyPreOrder();
   }
 
-  @GetMapping("/get-all-history-order")
+  @GetMapping("/all-history-orders")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       summary = "Get all history order",
-      tags = {"Sales Order APIs"})
+      tags = {"Sell Order APIs"})
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<List<OrderHistoryResponse>> getAllHistoryOrder() {
