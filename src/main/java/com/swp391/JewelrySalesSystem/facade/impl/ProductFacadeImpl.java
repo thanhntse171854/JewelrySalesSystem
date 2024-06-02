@@ -52,11 +52,20 @@ public class ProductFacadeImpl implements ProductFacade {
 
   private ProductResponse buildProductResponse(Product product) {
     float totalPrice = calculateTotalPrice(product);
+    String productImage =
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIgUj8mrkUcIsa9f-JmK1Tr7wzP2mZKBFKVw&s";
+
+    if (product.getProductAssets() != null && !product.getProductAssets().isEmpty()) {
+      String mediaUrl = product.getProductAssets().get(0).getMediaUrl();
+      if (mediaUrl != null && !mediaUrl.isEmpty()) {
+        productImage = mediaUrl;
+      }
+    }
     return ProductResponse.builder()
         .productId(product.getId())
         .productCode(product.getProductCode())
         .productName(product.getProductName())
-        .productImage("https://trangsuc.doji.vn/Upload/afrj000201f3cz1_1.jpg")
+        .productImage(productImage)
         .productPrice(totalPrice)
         .build();
   }
@@ -66,6 +75,7 @@ public class ProductFacadeImpl implements ProductFacade {
     List<MaterialDTO> materialDTOS = buildMaterialDTOs(product);
     List<SizeDTO> sizeDTOS = buildSizeDTOs(product);
     List<GemDTO> gemDTOS = getInformationGem(product);
+    ProductAssetResponse productAsset = buildProductAssetResponse(product);
 
     return ProductDetailResponse.builder()
         .id(product.getId())
@@ -77,9 +87,32 @@ public class ProductFacadeImpl implements ProductFacade {
         .category(product.getCategory().getCategoryName())
         .sizeProducts(sizeDTOS)
         .materials(materialDTOS)
+        .productAsset(productAsset)
         .totalPrice(totalPrice)
         .gem(gemDTOS)
         .build();
+  }
+
+  private ProductAssetResponse buildProductAssetResponse(Product product) {
+    List<ProductAsset> productAssets = product.getProductAssets();
+
+    String img1 = null;
+    String img2 = null;
+    String img3 = null;
+    String img4 = null;
+
+    if (productAssets != null && !productAssets.isEmpty()) {
+      if (productAssets.size() > 0) img1 = productAssets.get(0).getMediaUrl();
+      if (productAssets.size() > 1) img2 = productAssets.get(1).getMediaUrl();
+      if (productAssets.size() > 2) img3 = productAssets.get(2).getMediaUrl();
+      if (productAssets.size() > 3) img4 = productAssets.get(3).getMediaUrl();
+    }
+
+    if (img1 == null && img2 == null && img3 == null && img4 == null) {
+      return null;
+    }
+
+    return ProductAssetResponse.builder().img1(img1).img2(img2).img3(img3).img4(img4).build();
   }
 
   private CategoryResponse buildCategoryResponse(ProductCategory category) {

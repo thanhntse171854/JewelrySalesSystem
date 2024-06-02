@@ -24,4 +24,9 @@ public class OrderServiceImpl implements OrderService {
   public List<Orders> getAllHistoryOrder() {
     return orderRepository.findAll();
   }
+
+  @Override
+  public Orders findOrderByPhoneAndId(Long id, String phone) {
+    return orderRepository.findOrderByIdAndCustomerPhone(id, phone);
+  }
 }

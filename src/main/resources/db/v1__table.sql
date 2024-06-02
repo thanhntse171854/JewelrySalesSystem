@@ -251,6 +251,40 @@ CREATE TABLE "payments"
     "updated_at"   bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
 );
 
+CREATE TABLE "purchase_order"
+(
+    "id"               BIGSERIAL PRIMARY KEY NOT NULL,
+    "staff_id"         bigint                NOT NULL,
+    "customer_name"    varchar(50),
+    "phone"            varchar(16)           NOT NULL,
+    "is_product_store" bool                  NOT NULL DEFAULT false,
+    "total_price"      float,
+
+    "is_active"        boolean               NOT NULL DEFAULT true,
+    "created_at"       bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
+    "updated_at"       bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
+);
+
+CREATE TABLE "purchase_detail_order"
+(
+    "id"                BIGSERIAL PRIMARY KEY NOT NULL,
+    "name"              varchar(60),
+    "product_id"        bigint,
+    "purchase_order_id" bigint                NOT NULL,
+    "material_id"       bigint,
+    "weight"            float,
+    "origin"            varchar(50),
+    "color"             varchar(50),
+    "clarity"           varchar(50),
+    "cut"               varchar,
+    "carat"             float,
+    "price"             float,
+
+    "is_active"         boolean               NOT NULL DEFAULT true,
+    "created_at"        bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
+    "updated_at"        bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
+);
+
 
 
 
