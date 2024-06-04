@@ -27,6 +27,12 @@ public class CacheServiceImpl implements CacheService {
   }
 
   @Override
+  public List<String> getKeyByStaffId(String id) {
+    Set<String> keys = redisTemplate.keys(id + "*");
+    return new ArrayList<>(keys);
+  }
+
+  @Override
   public void delete(String key) {
     this.redisTemplate.delete(key);
   }

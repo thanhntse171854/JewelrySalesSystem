@@ -3,8 +3,10 @@ package com.swp391.JewelrySalesSystem.facade.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swp391.JewelrySalesSystem.entity.*;
 import com.swp391.JewelrySalesSystem.enums.CategoryType;
+import com.swp391.JewelrySalesSystem.enums.DeliveryStatus;
 import com.swp391.JewelrySalesSystem.enums.ErrorCode;
 import com.swp391.JewelrySalesSystem.enums.PaymentStatus;
+import com.swp391.JewelrySalesSystem.exception.OrderExcetpion;
 import com.swp391.JewelrySalesSystem.exception.SizeException;
 import com.swp391.JewelrySalesSystem.facade.OrderFacade;
 import com.swp391.JewelrySalesSystem.request.OrderRequest;
@@ -44,6 +46,8 @@ public class OrderFacadeImpl implements OrderFacade {
           Customer.builder()
               .name(orderRequest.getName())
               .phone(orderRequest.getPhone())
+              .dateOfBirth(orderRequest.getDateOfBirth())
+              .address(orderRequest.getAddress())
               .totalAmountPurchased(0L)
               .percentDiscount(0f)
               .build();
@@ -55,7 +59,7 @@ public class OrderFacadeImpl implements OrderFacade {
             .customer(customer)
             .user(user)
             .totalAmount(orderRequest.getTotalPrice())
-            .paymentStatus(PaymentStatus.PENDING)
+            .deliveryStatus(DeliveryStatus.PENDING)
             .paymentMethod(orderRequest.getPaymentMethod())
             .build();
 
@@ -69,6 +73,8 @@ public class OrderFacadeImpl implements OrderFacade {
         if (size == null || size.getQuantity() < order.getQuantity()) {
           throw new SizeException(ErrorCode.SIZE_NOT_FOUND);
         }
+        size.updateQuantity(Long.valueOf(order.getQuantity()));
+        productSizeService.save(size);
       }
       newOrder
           .getOrderDetails()
@@ -83,7 +89,6 @@ public class OrderFacadeImpl implements OrderFacade {
 
     if (orderRequest.getPaymentMethod().isCash()) {
       Long totalAmount = (long) (orderRequest.getTotalPrice() + customer.getTotalAmountPurchased());
-      newOrder.updatePaymentStatus(PaymentStatus.SUCCESS);
       customer.updateDiscount(totalAmount);
       customer.updateTotalAmountPurchase(totalAmount);
       customerService.save(customer);
@@ -137,6 +142,18 @@ public class OrderFacadeImpl implements OrderFacade {
   }
 
   @Override
+  public BaseResponse<List<String>> getKeyPreOrderOfStaffId(Long id) {
+    List<String> list = cacheService.getKeyByStaffId(String.valueOf(id));
+    return BaseResponse.build(list, true);
+  }
+
+  @Override
+  public BaseResponse<Void> deletePreOderByKey(String key) {
+    cacheService.delete(key);
+    return BaseResponse.ok();
+  }
+
+  @Override
   public BaseResponse<List<OrderHistoryResponse>> getAllHistoryOrder() {
     List<Orders> list = orderService.getAllHistoryOrder();
     List<OrderHistoryResponse> orderHistoryResponses = new ArrayList<>();
@@ -146,11 +163,23 @@ public class OrderFacadeImpl implements OrderFacade {
               .orderId(listOrder.getId())
               .salesStaffName(listOrder.getUser().getName())
               .totalPrice(listOrder.getTotalAmount())
-              .paymentStatus(listOrder.getPaymentStatus())
+              .deliveryStatus(listOrder.getDeliveryStatus())
+              .paymentMethod(listOrder.getPaymentMethod())
               .dateOrder(listOrder.getCreatedAt())
               .build());
     }
     return BaseResponse.build(orderHistoryResponses, true);
+  }
+
+  @Override
+  public BaseResponse<Void> updateStatusDelivery(Long id) {
+    Orders orders =
+        orderService
+            .findOrderById(id)
+            .orElseThrow(() -> new OrderExcetpion(ErrorCode.ORDER_NOT_FOUND));
+    orders.updateDelivery(DeliveryStatus.SUCCESS);
+    orderService.save(orders);
+    return BaseResponse.ok();
   }
 
   private String generatePaymentCode() {

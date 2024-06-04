@@ -15,4 +15,9 @@ public class ProductSizeImpl implements ProductSizeService {
   public SizeProduct findByProductIdAndSizeId(Long productId, Long sizeId) {
     return productSizeRepository.findByProductIdAndSizeId(productId, sizeId);
   }
+
+  @Override
+  public void save(SizeProduct sizeProduct) {
+    productSizeRepository.save(sizeProduct);
+  }
 }

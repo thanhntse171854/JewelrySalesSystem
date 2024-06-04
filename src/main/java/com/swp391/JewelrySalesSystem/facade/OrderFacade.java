@@ -17,5 +17,11 @@ public interface OrderFacade {
 
   BaseResponse<List<String>> getAllKeyPreOrder();
 
+  BaseResponse<List<String>> getKeyPreOrderOfStaffId(Long id);
+
+  BaseResponse<Void> deletePreOderByKey(String key);
+
   BaseResponse<List<OrderHistoryResponse>> getAllHistoryOrder();
+
+  BaseResponse<Void> updateStatusDelivery(Long id);
 }

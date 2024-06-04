@@ -9,6 +9,8 @@ public interface CacheService {
 
   Object retrieve(String key);
 
+  List<String> getKeyByStaffId(String id);
+
   void delete(String key);
 
   Boolean hasKey(String key);

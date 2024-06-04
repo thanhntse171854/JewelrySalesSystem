@@ -24,4 +24,8 @@ public class SizeProduct extends BaseEntity implements Serializable {
 
   @Column(name = "quantity", nullable = false)
   private Long quantity;
+
+  public void updateQuantity(Long sellQuantity) {
+    this.quantity = this.quantity - sellQuantity;
+  }
 }

@@ -22,6 +22,12 @@ public class Customer extends BaseEntity implements Serializable {
   @Column(name = "phone", nullable = false, unique = true)
   private String phone;
 
+  @Column(name = "address")
+  private String address;
+
+  @Column(name = "date_of_birth")
+  private Long dateOfBirth;
+
   @Column(name = "percent_discount")
   private Float percentDiscount;
 

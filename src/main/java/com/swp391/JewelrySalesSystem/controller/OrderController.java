@@ -71,8 +71,31 @@ public class OrderController {
       tags = {"Sell Order APIs"})
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("isAuthenticated()")
-  public BaseResponse<List<String>> updatePreOrder() {
+  public BaseResponse<List<String>> getAllKeyPreOrder() {
     return this.orderFacade.getAllKeyPreOrder();
+  }
+
+  @GetMapping("/pre-order/{staffId}")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Get key pre order",
+      tags = {"Sell Order APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("isAuthenticated()")
+  public BaseResponse<List<String>> getKeyPreOrderOfStaffId(@PathVariable("staffId") Long id) {
+    return this.orderFacade.getKeyPreOrderOfStaffId(id);
+  }
+
+  @DeleteMapping("/pre-order/{key}")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Get key pre order of staff staff",
+      tags = {"Sell Order APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("isAuthenticated()")
+  public BaseResponse<Void> deletePreOrderByKey(@PathVariable("key") String key) {
+
+    return this.orderFacade.deletePreOderByKey(key);
   }
 
   @GetMapping("/all-history-orders")
@@ -84,5 +107,16 @@ public class OrderController {
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<List<OrderHistoryResponse>> getAllHistoryOrder() {
     return this.orderFacade.getAllHistoryOrder();
+  }
+
+  @PostMapping("/delivery/{orderId}")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Update delivery order",
+      tags = {"Sell Order APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("isAuthenticated()")
+  public BaseResponse<Void> updateStatusDelivery(@PathVariable("orderId") Long id) {
+    return this.orderFacade.updateStatusDelivery(id);
   }
 }
