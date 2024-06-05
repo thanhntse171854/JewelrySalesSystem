@@ -9,7 +9,7 @@ public interface OrderService {
 
   List<Orders> getAllHistoryOrder();
 
-  Orders findOrderByPhoneAndId(Long orderId, String phone);
+  Orders findOrderByPhoneAndCode(String orderCode, String phone);
 
   Optional<Orders> findOrderById(Long id);
 }

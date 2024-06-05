@@ -56,6 +56,7 @@ public class OrderFacadeImpl implements OrderFacade {
 
     var newOrder =
         Orders.builder()
+            .orderCode(orderRequest.getOrderCode())
             .customer(customer)
             .user(user)
             .totalAmount(orderRequest.getTotalPrice())

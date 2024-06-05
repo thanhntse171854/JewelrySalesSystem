@@ -18,6 +18,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 public class Orders extends BaseEntity implements Serializable {
+  @Column(name = "order_code", unique = true, nullable = false)
+  private String orderCode;
+
   @ManyToOne
   @JoinColumn(name = "customer_id", referencedColumnName = "id")
   private Customer customer;

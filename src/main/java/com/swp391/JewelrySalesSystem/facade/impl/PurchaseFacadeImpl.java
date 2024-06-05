@@ -1,15 +1,16 @@
 package com.swp391.JewelrySalesSystem.facade.impl;
 
-import com.swp391.JewelrySalesSystem.entity.Orders;
-import com.swp391.JewelrySalesSystem.entity.PurchaseOrder;
-import com.swp391.JewelrySalesSystem.entity.PurchaseOrderDetail;
-import com.swp391.JewelrySalesSystem.entity.User;
+import com.swp391.JewelrySalesSystem.entity.*;
 import com.swp391.JewelrySalesSystem.facade.PurchaseFacade;
+import com.swp391.JewelrySalesSystem.request.GemFilterRequest;
 import com.swp391.JewelrySalesSystem.request.PurchaseOrderRequest;
 import com.swp391.JewelrySalesSystem.request.ValidateOrderRequest;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
+import com.swp391.JewelrySalesSystem.response.GemPriceResponse;
 import com.swp391.JewelrySalesSystem.response.OrderHistoryResponse;
 import com.swp391.JewelrySalesSystem.service.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +22,12 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
   private final MaterialService materialService;
   private final ProductService productService;
   private final PurchaseService purchaseService;
+  private final PriceService priceService;
 
   @Override
   public BaseResponse<OrderHistoryResponse> validateOrder(ValidateOrderRequest request) {
-    Orders orders = orderService.findOrderByPhoneAndId(request.getOrderId(), request.getPhone());
+    Orders orders =
+        orderService.findOrderByPhoneAndCode(request.getOrderCode(), request.getPhone());
     if (orders == null) {
       return BaseResponse.fail();
     }
@@ -79,5 +82,31 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
 
     purchaseService.save(purchaseOrder);
     return BaseResponse.ok();
+  }
+
+  @Override
+  public BaseResponse<List<GemPriceResponse>> getGemByFilter(GemFilterRequest request) {
+    List<Gem> gems = priceService.filterGemPriceLists(request);
+    List<GemPriceList> gemPriceList = new ArrayList<>();
+    for (var gem : gems) {
+      gemPriceList.add(priceService.findGemPriceList(gem));
+    }
+    List<GemPriceResponse> gemPriceResponseList =
+        gemPriceList.stream()
+            .map(
+                gemTmp ->
+                    GemPriceResponse.builder()
+                        .gemId(gemTmp.getId())
+                        .origin(gemTmp.getOrigin())
+                        .color(gemTmp.getColor())
+                        .clarity(gemTmp.getClarity())
+                        .cut(gemTmp.getCut())
+                        .carat(gemTmp.getCarat())
+                        .gemBuyPrice(gemTmp.getBuyPrice())
+                        .gemSellPrice(gemTmp.getSellPrice())
+                        .effectDate(gemTmp.getEffectDate())
+                        .build())
+            .toList();
+    return BaseResponse.build(gemPriceResponseList, true);
   }
 }
