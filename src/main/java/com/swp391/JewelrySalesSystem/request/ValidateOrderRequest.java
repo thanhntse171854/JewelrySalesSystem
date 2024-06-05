@@ -11,5 +11,5 @@ import lombok.Setter;
 @Setter
 public class ValidateOrderRequest {
   private String phone;
-  private Long orderId;
+  private String orderCode;
 }

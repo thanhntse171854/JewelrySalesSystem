@@ -10,7 +10,8 @@ import org.springframework.stereotype.Repository;
 public interface OrderRepository extends JpaRepository<Orders, Long> {
   @Query(
       value =
-          "select o.* from orders o join customers c on c.id = o.customer_id where  c.phone = :phone  and o.id = :id ",
+          "select o.* from orders o join customers c on c.id = o.customer_id where  c.phone = :phone  and o.order_code = :code ",
       nativeQuery = true)
-  Orders findOrderByIdAndCustomerPhone(@Param("id") Long orderId, @Param("phone") String phone);
+  Orders findOrderByOrderCodeAndCustomerPhone(
+      @Param("code") String code, @Param("phone") String phone);
 }

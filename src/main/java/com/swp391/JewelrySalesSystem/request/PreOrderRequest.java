@@ -12,6 +12,7 @@ import lombok.*;
 public class PreOrderRequest implements Serializable {
   private Long staffId;
   private String customer;
+  private String phone;
   private List<ProductPreOrderRequest> orderList;
   private Float totalPrice;
 }
