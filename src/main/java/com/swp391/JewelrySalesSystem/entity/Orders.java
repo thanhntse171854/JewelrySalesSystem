@@ -1,7 +1,7 @@
 package com.swp391.JewelrySalesSystem.entity;
 
+import com.swp391.JewelrySalesSystem.enums.DeliveryStatus;
 import com.swp391.JewelrySalesSystem.enums.PaymentMethod;
-import com.swp391.JewelrySalesSystem.enums.PaymentStatus;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -33,15 +33,15 @@ public class Orders extends BaseEntity implements Serializable {
   @Column(name = "total_amount", nullable = false)
   private float totalAmount;
 
-  @Column(name = "payment_status")
+  @Column(name = "delivery_stage_status")
   @Enumerated(EnumType.STRING)
-  private PaymentStatus paymentStatus;
+  private DeliveryStatus deliveryStatus;
 
   @Column(name = "payment_method", nullable = false, length = 50)
   @Enumerated(EnumType.STRING)
   private PaymentMethod paymentMethod;
 
-  public void updatePaymentStatus(PaymentStatus paymentStatus) {
-    this.paymentStatus = paymentStatus;
+  public void updateDelivery(DeliveryStatus deliveryStatus) {
+    this.deliveryStatus = deliveryStatus;
   }
 }

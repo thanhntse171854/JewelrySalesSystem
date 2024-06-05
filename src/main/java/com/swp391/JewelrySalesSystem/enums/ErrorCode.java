@@ -13,7 +13,8 @@ public enum ErrorCode {
 
   GEM_PRICE_LIST_NOT_FOUND("1005", "Gem price list not found"),
   MATERIAL_PRICE_LIST_NOT_FOUND("1006", "Gem price list not found"),
-  SIZE_NOT_FOUND("1007", "Product size does not exist or is out of stock");
+  SIZE_NOT_FOUND("1007", "Product size does not exist or is out of stock"),
+  ORDER_NOT_FOUND("1008", "Order not found");
 
   private final String code;
   private final String message;

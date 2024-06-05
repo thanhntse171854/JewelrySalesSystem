@@ -5,6 +5,7 @@ import com.swp391.JewelrySalesSystem.repository.OrderRepository;
 import com.swp391.JewelrySalesSystem.service.OrderService;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,5 +29,10 @@ public class OrderServiceImpl implements OrderService {
   @Override
   public Orders findOrderByPhoneAndId(Long id, String phone) {
     return orderRepository.findOrderByIdAndCustomerPhone(id, phone);
+  }
+
+  @Override
+  public Optional<Orders> findOrderById(Long id) {
+    return orderRepository.findById(id);
   }
 }

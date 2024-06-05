@@ -1,6 +1,7 @@
 package com.swp391.JewelrySalesSystem.response;
 
-import com.swp391.JewelrySalesSystem.enums.PaymentStatus;
+import com.swp391.JewelrySalesSystem.enums.DeliveryStatus;
+import com.swp391.JewelrySalesSystem.enums.PaymentMethod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,5 +16,6 @@ public class OrderHistoryResponse {
   private Long orderId;
   private float totalPrice;
   private Long dateOrder;
-  private PaymentStatus paymentStatus;
+  private PaymentMethod paymentMethod;
+  private DeliveryStatus deliveryStatus;
 }

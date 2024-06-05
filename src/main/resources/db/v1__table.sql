@@ -190,15 +190,15 @@ CREATE TABLE "size_products"
 
 CREATE TABLE "orders"
 (
-    "id"             BIGSERIAL PRIMARY KEY NOT NULL,
-    "customer_id"    bigint                NOT NULL,
-    "staff_id"       bigint                NOT NULL,
-    "total_amount"   float                 NOT NULL,
-    "payment_status" varchar(50)           NOT NULL,
-    "payment_method" varchar(50)           NOT NULL,
-    "is_active"      boolean               NOT NULL DEFAULT true,
-    "created_at"     bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
-    "updated_at"     bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
+    "id"                    BIGSERIAL PRIMARY KEY NOT NULL,
+    "customer_id"           bigint                NOT NULL,
+    "staff_id"              bigint                NOT NULL,
+    "total_amount"          float                 NOT NULL,
+    "delivery_stage_status" varchar(50)           NOT NULL,
+    "payment_method"        varchar(50)           NOT NULL,
+    "is_active"             boolean               NOT NULL DEFAULT true,
+    "created_at"            bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
+    "updated_at"            bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
 );
 
 CREATE TABLE "guarantees"
@@ -231,6 +231,8 @@ CREATE TABLE "customers"
     "id"                     BIGSERIAL PRIMARY KEY NOT NULL,
     "customer_name"          varchar(255)          NOT NULL,
     "phone"                  varchar(20) UNIQUE    NOT NULL,
+    "address"                varchar(255),
+    "date_of_birth"          bigint,
     "percent_discount"       float,
     "total_amount_purchased" bigint,
     "is_active"              boolean               NOT NULL DEFAULT true,

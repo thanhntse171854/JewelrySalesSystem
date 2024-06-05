@@ -1,7 +1,6 @@
 package com.swp391.JewelrySalesSystem.facade.impl;
 
 import com.swp391.JewelrySalesSystem.entity.Orders;
-
 import com.swp391.JewelrySalesSystem.entity.PurchaseOrder;
 import com.swp391.JewelrySalesSystem.entity.PurchaseOrderDetail;
 import com.swp391.JewelrySalesSystem.entity.User;
@@ -26,7 +25,7 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
   @Override
   public BaseResponse<OrderHistoryResponse> validateOrder(ValidateOrderRequest request) {
     Orders orders = orderService.findOrderByPhoneAndId(request.getOrderId(), request.getPhone());
-    if(orders == null) {
+    if (orders == null) {
       return BaseResponse.fail();
     }
     return BaseResponse.build(
@@ -35,7 +34,8 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
             .salesStaffName(orders.getUser().getName())
             .dateOrder(orders.getCreatedAt())
             .totalPrice(orders.getTotalAmount())
-            .paymentStatus(orders.getPaymentStatus())
+            .deliveryStatus(orders.getDeliveryStatus())
+            .paymentMethod(orders.getPaymentMethod())
             .build(),
         true);
   }
