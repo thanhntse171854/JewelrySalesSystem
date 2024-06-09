@@ -128,7 +128,7 @@ public class OrderController {
       tags = {"Sell Order APIs"})
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("isAuthenticated()")
-  public BaseResponse<OrderDetailResponse> updateStatusDelivery(
+  public BaseResponse<OrderDetailResponse> getOrderDetail(
       @PathVariable("orderCode") String code) {
     return this.orderFacade.getOrderDetail(code);
   }
