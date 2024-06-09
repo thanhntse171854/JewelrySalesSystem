@@ -121,7 +121,7 @@ public class OrderController {
     return this.orderFacade.updateStatusDelivery(id);
   }
 
-  @PostMapping("/order-detail/{orderCode}")
+  @GetMapping("/order-detail/{orderCode}")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       summary = "Get order detail by orderCode",
