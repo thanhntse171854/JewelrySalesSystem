@@ -15,4 +15,6 @@ public interface ProductRepository
 
   @Query("SELECT p FROM Product p")
   Page<Product> findByFilter(Pageable pageable);
+
+  Product findByProductCode(String code);
 }

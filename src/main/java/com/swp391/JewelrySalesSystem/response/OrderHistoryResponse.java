@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class OrderHistoryResponse {
   private String salesStaffName;
   private Long orderId;
+  private String orderCode;
   private float totalPrice;
   private Long dateOrder;
   private PaymentMethod paymentMethod;

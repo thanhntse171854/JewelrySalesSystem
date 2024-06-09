@@ -12,7 +12,9 @@ import com.swp391.JewelrySalesSystem.facade.OrderFacade;
 import com.swp391.JewelrySalesSystem.request.OrderRequest;
 import com.swp391.JewelrySalesSystem.request.PreOrderRequest;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
+import com.swp391.JewelrySalesSystem.response.OrderDetailResponse;
 import com.swp391.JewelrySalesSystem.response.OrderHistoryResponse;
+import com.swp391.JewelrySalesSystem.response.ProductOrderDetailResponse;
 import com.swp391.JewelrySalesSystem.service.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -162,6 +164,7 @@ public class OrderFacadeImpl implements OrderFacade {
       orderHistoryResponses.add(
           OrderHistoryResponse.builder()
               .orderId(listOrder.getId())
+              .orderCode(listOrder.getOrderCode())
               .salesStaffName(listOrder.getUser().getName())
               .totalPrice(listOrder.getTotalAmount())
               .deliveryStatus(listOrder.getDeliveryStatus())
@@ -181,6 +184,32 @@ public class OrderFacadeImpl implements OrderFacade {
     orders.updateDelivery(DeliveryStatus.SUCCESS);
     orderService.save(orders);
     return BaseResponse.ok();
+  }
+
+  @Override
+  public BaseResponse<OrderDetailResponse> getOrderDetail(String code) {
+    var order = orderService.findByOrderCode(code);
+    List<ProductOrderDetailResponse> orderDetailResponses = new ArrayList<>();
+    for (var orderDetail : order.getOrderDetails()) {
+      orderDetailResponses.add(
+          ProductOrderDetailResponse.builder()
+              .productId(orderDetail.getProduct().getId())
+              .productCode(orderDetail.getProduct().getProductCode())
+              .productName(orderDetail.getProduct().getProductName())
+              .quantity(Long.valueOf(orderDetail.getQuantity()))
+              .size(orderDetail.getSize() != null ? orderDetail.getSize().getSize() : null)
+              .build());
+    }
+
+    return BaseResponse.build(
+        OrderDetailResponse.builder()
+            .customerName(order.getCustomer().getName())
+            .customerPhone(order.getCustomer().getPhone())
+            .paymentMethod(order.getPaymentMethod())
+            .dateSell(order.getCreatedAt())
+            .list(orderDetailResponses)
+            .build(),
+        true);
   }
 
   private String generatePaymentCode() {

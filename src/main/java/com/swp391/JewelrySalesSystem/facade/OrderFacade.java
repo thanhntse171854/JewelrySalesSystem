@@ -3,6 +3,7 @@ package com.swp391.JewelrySalesSystem.facade;
 import com.swp391.JewelrySalesSystem.request.OrderRequest;
 import com.swp391.JewelrySalesSystem.request.PreOrderRequest;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
+import com.swp391.JewelrySalesSystem.response.OrderDetailResponse;
 import com.swp391.JewelrySalesSystem.response.OrderHistoryResponse;
 import java.util.List;
 
@@ -24,4 +25,6 @@ public interface OrderFacade {
   BaseResponse<List<OrderHistoryResponse>> getAllHistoryOrder();
 
   BaseResponse<Void> updateStatusDelivery(Long id);
+
+  BaseResponse<OrderDetailResponse> getOrderDetail(String code);
 }
