@@ -12,4 +12,6 @@ public interface OrderService {
   Orders findOrderByPhoneAndCode(String orderCode, String phone);
 
   Optional<Orders> findOrderById(Long id);
+
+  Orders findByOrderCode(String code);
 }

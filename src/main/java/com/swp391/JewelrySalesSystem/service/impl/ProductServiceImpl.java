@@ -52,4 +52,9 @@ public class ProductServiceImpl implements ProductService {
 
     return productRepository.findAll(specification, pageable);
   }
+
+  @Override
+  public Product findByProductCode(String code) {
+    return productRepository.findByProductCode(code);
+  }
 }

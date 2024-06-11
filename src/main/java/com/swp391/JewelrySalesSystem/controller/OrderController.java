@@ -4,6 +4,7 @@ import com.swp391.JewelrySalesSystem.facade.OrderFacade;
 import com.swp391.JewelrySalesSystem.request.OrderRequest;
 import com.swp391.JewelrySalesSystem.request.PreOrderRequest;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
+import com.swp391.JewelrySalesSystem.response.OrderDetailResponse;
 import com.swp391.JewelrySalesSystem.response.OrderHistoryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -118,5 +119,17 @@ public class OrderController {
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<Void> updateStatusDelivery(@PathVariable("orderId") Long id) {
     return this.orderFacade.updateStatusDelivery(id);
+  }
+
+  @GetMapping("/order-detail/{orderCode}")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Get order detail by orderCode",
+      tags = {"Sell Order APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("isAuthenticated()")
+  public BaseResponse<OrderDetailResponse> getOrderDetail(
+      @PathVariable("orderCode") String code) {
+    return this.orderFacade.getOrderDetail(code);
   }
 }

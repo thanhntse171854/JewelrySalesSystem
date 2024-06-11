@@ -34,6 +34,7 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
     return BaseResponse.build(
         OrderHistoryResponse.builder()
             .orderId(orders.getId())
+            .orderCode(orders.getOrderCode())
             .salesStaffName(orders.getUser().getName())
             .dateOrder(orders.getCreatedAt())
             .totalPrice(orders.getTotalAmount())
@@ -61,8 +62,8 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
           .add(
               PurchaseOrderDetail.builder()
                   .productId(
-                      (purchase.getProductId() != null)
-                          ? productService.findByProductIdAndActive(purchase.getProductId()).getId()
+                      (purchase.getProductCode() != null)
+                          ? productService.findByProductCode(purchase.getProductCode()).getId()
                           : null)
                   .name((purchase.getName() != null) ? purchase.getName() : null)
                   .carat((purchase.getCarat() != null) ? purchase.getCarat() : null)

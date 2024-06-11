@@ -8,4 +8,6 @@ public interface ProductService {
   Product findByProductIdAndActive(Long id);
 
   Page<Product> findByFilter(ProductCriteria criteria);
+
+  Product findByProductCode(String code);
 }

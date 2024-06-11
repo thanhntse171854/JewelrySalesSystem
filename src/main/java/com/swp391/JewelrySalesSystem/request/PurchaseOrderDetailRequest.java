@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PurchaseOrderDetailRequest {
   private String name;
-  private Long productId;
+  private String productCode;
   private Long materialId;
   private Float weight;
   private String origin;

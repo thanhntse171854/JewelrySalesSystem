@@ -1,6 +1,8 @@
 package com.swp391.JewelrySalesSystem.service.impl;
 
 import com.swp391.JewelrySalesSystem.entity.Orders;
+import com.swp391.JewelrySalesSystem.enums.ErrorCode;
+import com.swp391.JewelrySalesSystem.exception.OrderExcetpion;
 import com.swp391.JewelrySalesSystem.repository.OrderRepository;
 import com.swp391.JewelrySalesSystem.service.OrderService;
 import jakarta.transaction.Transactional;
@@ -34,5 +36,12 @@ public class OrderServiceImpl implements OrderService {
   @Override
   public Optional<Orders> findOrderById(Long id) {
     return orderRepository.findById(id);
+  }
+
+  @Override
+  public Orders findByOrderCode(String code) {
+    return orderRepository
+        .findByOrderCode(code)
+        .orElseThrow(() -> new OrderExcetpion(ErrorCode.ORDER_NOT_FOUND));
   }
 }
