@@ -11,6 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProductOrderRequest {
   private Long productId;
-  private Long sizeId;
-  private Integer quantity;
+  private Float price;
 }

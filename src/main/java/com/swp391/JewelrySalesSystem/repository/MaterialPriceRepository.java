@@ -13,9 +13,9 @@ public interface MaterialPriceRepository extends JpaRepository<MaterialPriceList
       value =
           "SELECT mpl.* "
               + "FROM material_price_list mpl "
-              + "WHERE mpl.effect_date > :currentTimestamp "
+              + "WHERE mpl.effect_date < :currentTimestamp "
               + "AND mpl.material_id = :materialId "
-              + "ORDER BY mpl.effect_date ASC LIMIT 1",
+              + "ORDER BY mpl.effect_date DESC LIMIT 1",
       nativeQuery = true)
   Optional<MaterialPriceList> findMaterialPriceList(
       @Param("materialId") Long id, @Param("currentTimestamp") long currentTimestamp);

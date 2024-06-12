@@ -1,30 +1,25 @@
 package com.swp391.JewelrySalesSystem.facade;
 
-import com.swp391.JewelrySalesSystem.request.OrderRequest;
-import com.swp391.JewelrySalesSystem.request.PreOrderRequest;
+import com.swp391.JewelrySalesSystem.request.PaymentRequest;
+import com.swp391.JewelrySalesSystem.request.UpsertOrderRequest;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
 import com.swp391.JewelrySalesSystem.response.OrderDetailResponse;
 import com.swp391.JewelrySalesSystem.response.OrderHistoryResponse;
+import com.swp391.JewelrySalesSystem.response.OrderRepsone;
 import java.util.List;
 
 public interface OrderFacade {
-  BaseResponse<Void> orderProduct(OrderRequest request);
+  BaseResponse<Void> orderProduct(UpsertOrderRequest request);
 
-  BaseResponse<Void> preOrderProduct(PreOrderRequest request);
+  BaseResponse<List<OrderRepsone>> getOrderProductBySeller(Long staffId);
 
-  BaseResponse<PreOrderRequest> getPreOrderProduct(String key);
+  BaseResponse<Void> deleteOderByKey(String code);
 
-  BaseResponse<Void> updatePreOrderProduct(String key, PreOrderRequest request);
+  BaseResponse<Void> payment(PaymentRequest request);
 
-  BaseResponse<List<String>> getAllKeyPreOrder();
-
-  BaseResponse<List<String>> getKeyPreOrderOfStaffId(Long id);
-
-  BaseResponse<Void> deletePreOderByKey(String key);
+  BaseResponse<OrderDetailResponse> getOrderDetail(String code);
 
   BaseResponse<List<OrderHistoryResponse>> getAllHistoryOrder();
 
-  BaseResponse<Void> updateStatusDelivery(Long id);
-
-  BaseResponse<OrderDetailResponse> getOrderDetail(String code);
+  BaseResponse<Void> updateStatusDelivery(String code);
 }

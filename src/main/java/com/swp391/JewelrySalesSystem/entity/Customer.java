@@ -32,13 +32,13 @@ public class Customer extends BaseEntity implements Serializable {
   private Float percentDiscount;
 
   @Column(name = "total_amount_purchased")
-  private Long totalAmountPurchased;
+  private Float totalAmountPurchased;
 
   @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @Builder.Default
   private List<Orders> orders = new ArrayList<>();
 
-  public void updateDiscount(Long total) {
+  public void updateDiscount(Float total) {
     if (total >= 15000) {
       this.percentDiscount = 15.0f;
     } else if (total >= 10000) {
@@ -50,7 +50,7 @@ public class Customer extends BaseEntity implements Serializable {
     }
   }
 
-  public void updateTotalAmountPurchase(Long totalAmountPurchased) {
+  public void updateTotalAmountPurchase(Float totalAmountPurchased) {
     this.totalAmountPurchased = totalAmountPurchased;
   }
 }

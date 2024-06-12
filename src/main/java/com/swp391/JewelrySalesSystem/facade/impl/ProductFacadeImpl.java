@@ -2,7 +2,6 @@ package com.swp391.JewelrySalesSystem.facade.impl;
 
 import com.swp391.JewelrySalesSystem.dto.GemDTO;
 import com.swp391.JewelrySalesSystem.dto.MaterialDTO;
-import com.swp391.JewelrySalesSystem.dto.SizeDTO;
 import com.swp391.JewelrySalesSystem.entity.*;
 import com.swp391.JewelrySalesSystem.enums.CategoryType;
 import com.swp391.JewelrySalesSystem.facade.ProductFacade;
@@ -73,7 +72,6 @@ public class ProductFacadeImpl implements ProductFacade {
   private ProductDetailResponse buildProductDetailResponse(Product product) {
     float totalPrice = calculateTotalPrice(product);
     List<MaterialDTO> materialDTOS = buildMaterialDTOs(product);
-    List<SizeDTO> sizeDTOS = buildSizeDTOs(product);
     List<GemDTO> gemDTOS = getInformationGem(product);
     ProductAssetResponse productAsset = buildProductAssetResponse(product);
 
@@ -85,7 +83,6 @@ public class ProductFacadeImpl implements ProductFacade {
         .gemCost(product.getGemCost())
         .productionCost(product.getProductionCost())
         .category(product.getCategory().getCategoryName())
-        .sizeProducts(sizeDTOS)
         .materials(materialDTOS)
         .productAsset(productAsset)
         .totalPrice(totalPrice)
@@ -176,25 +173,11 @@ public class ProductFacadeImpl implements ProductFacade {
         .toList();
   }
 
-  private List<SizeDTO> buildSizeDTOs(Product product) {
-    boolean isDiamondProduct = product.getCategory().getCategoryType().equals(CategoryType.DIAMOND);
-    if (isDiamondProduct) return new ArrayList<>();
-
-    return product.getSizeProducts().stream()
-        .map(
-            sizeProduct ->
-                new SizeDTO(
-                    sizeProduct.getSize().getId(),
-                    sizeProduct.getSize().getSize(),
-                    sizeProduct.getQuantity()))
-        .toList();
-  }
-
-  private Long getMaxPriceSellForGem(@NotNull Gem gem) {
+  private Float getMaxPriceSellForGem(@NotNull Gem gem) {
     return priceService.findGemPriceList(gem).getSellPrice();
   }
 
-  private long getMaxPriceForMaterial(@NotNull Material material) {
+  private Float getMaxPriceForMaterial(@NotNull Material material) {
     return priceService.findMaterialPriceList(material.getId()).getSellPrice();
   }
 
@@ -202,11 +185,7 @@ public class ProductFacadeImpl implements ProductFacade {
     return product.getProductGems().stream()
         .map(
             productGem -> {
-              Long price = getMaxPriceSellForGem(productGem.getGem());
-              Long quantity =
-                  product.getCategory().getCategoryType().equals(CategoryType.DIAMOND)
-                      ? productGem.getGem().getQuantity()
-                      : 0L;
+              Float price = getMaxPriceSellForGem(productGem.getGem());
 
               return GemDTO.builder()
                   .id(productGem.getGem().getId())
@@ -217,9 +196,8 @@ public class ProductFacadeImpl implements ProductFacade {
                   .cut(productGem.getGem().getCut())
                   .origin(productGem.getGem().getOrigin())
                   .priceSell(price)
-                  .weight(productGem.getGem().getCarat())
-                  .quantity(quantity)
-                  .totalPrice((float) (price + product.getProductionCost()))
+                  .carat(productGem.getGem().getCarat())
+                  .totalPrice(price + product.getProductionCost())
                   .build();
             })
         .toList();

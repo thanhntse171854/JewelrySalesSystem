@@ -11,6 +11,5 @@ public class ProductOrderDetailResponse {
   private Long productId;
   private String productCode;
   private String productName;
-  private Float size;
-  private Long quantity;
+  private Float price;
 }

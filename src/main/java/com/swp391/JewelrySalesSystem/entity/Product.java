@@ -1,6 +1,7 @@
 package com.swp391.JewelrySalesSystem.entity;
 
 import com.swp391.JewelrySalesSystem.enums.Gender;
+import com.swp391.JewelrySalesSystem.enums.Size;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -51,8 +52,9 @@ public class Product extends BaseEntity implements Serializable {
   @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<ProductMaterial> productMaterials = new ArrayList<>();
 
-  @OneToMany(mappedBy = "product")
-  private List<SizeProduct> sizeProducts = new ArrayList<>();
+  @Column(name = "size", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private Size size;
 
   @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<ProductAsset> productAssets = new ArrayList<>();

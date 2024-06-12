@@ -16,7 +16,7 @@ public class GemPriceResponse {
   private String clarity;
   private String cut;
   private Float carat;
-  private Long gemBuyPrice;
-  private Long gemSellPrice;
+  private Float gemBuyPrice;
+  private Float gemSellPrice;
   private Long effectDate;
 }
