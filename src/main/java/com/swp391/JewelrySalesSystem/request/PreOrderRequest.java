@@ -10,9 +10,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PreOrderRequest implements Serializable {
+  private String orderCode;
   private Long staffId;
-  private String customer;
   private String phone;
-  private List<ProductPreOrderRequest> orderList;
+  private String name;
+  private List<ProductOrderRequest> orderList;
   private Float totalPrice;
 }

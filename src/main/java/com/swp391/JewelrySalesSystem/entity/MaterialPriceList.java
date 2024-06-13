@@ -19,10 +19,10 @@ public class MaterialPriceList extends BaseEntity implements Serializable {
   private Material material;
 
   @Column(name = "buy_price", nullable = false)
-  private Long buyPrice;
+  private Float buyPrice;
 
   @Column(name = "sell_price", nullable = false)
-  private Long sellPrice;
+  private Float sellPrice;
 
   @Column(name = "effect_date", nullable = false)
   private Long effectDate;

@@ -1,6 +1,7 @@
 package com.swp391.JewelrySalesSystem.repository;
 
 import com.swp391.JewelrySalesSystem.entity.Orders;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +18,6 @@ public interface OrderRepository extends JpaRepository<Orders, Long> {
       @Param("code") String code, @Param("phone") String phone);
 
   Optional<Orders> findByOrderCode(String code);
+
+  List<Orders> findByUserId(Long id);
 }

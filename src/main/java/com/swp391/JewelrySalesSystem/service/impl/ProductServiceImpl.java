@@ -57,4 +57,9 @@ public class ProductServiceImpl implements ProductService {
   public Product findByProductCode(String code) {
     return productRepository.findByProductCode(code);
   }
+
+  @Override
+  public void deactivateProduct(Long productId) {
+    productRepository.deactivateProductById(productId);
+  }
 }

@@ -15,5 +15,5 @@ public class CustomerResponse {
   private String address;
   private Long dateOfBirth;
   private Float percentDiscount;
-  private Long totalAmountPurchased;
+  private Float totalAmountPurchased;
 }

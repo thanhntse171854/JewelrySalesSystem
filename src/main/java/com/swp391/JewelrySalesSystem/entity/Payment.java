@@ -28,4 +28,8 @@ public class Payment extends BaseEntity implements Serializable {
 
   @Column(name = "total_price")
   private Float totalPrice;
+
+  public void updateStatus(PaymentStatus paymentStatus) {
+    this.status = paymentStatus;
+  }
 }

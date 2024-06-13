@@ -22,10 +22,6 @@ public class OrderDetail extends BaseEntity implements Serializable {
   @JoinColumn(name = "product_id", nullable = false)
   private Product product;
 
-  @ManyToOne
-  @JoinColumn(name = "size_id")
-  private Size size;
-
-  @Column(name = "quantity", nullable = false)
-  private int quantity = 1;
+  @Column(name = "price", nullable = false)
+  private Float price;
 }

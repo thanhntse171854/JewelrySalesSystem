@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class MaterialPriceResponse {
   private Long materialId;
   private String materialName;
-  private Long materialBuyPrice;
-  private Long materialSellPrice;
+  private Float materialBuyPrice;
+  private Float materialSellPrice;
   private Long effectDate;
 }

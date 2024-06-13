@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 public class Orders extends BaseEntity implements Serializable {
+
   @Column(name = "order_code", unique = true, nullable = false)
   private String orderCode;
 
@@ -34,7 +35,7 @@ public class Orders extends BaseEntity implements Serializable {
   private List<OrderDetail> orderDetails = new ArrayList<>();
 
   @Column(name = "total_amount", nullable = false)
-  private float totalAmount;
+  private Float totalAmount;
 
   @Column(name = "delivery_stage_status")
   @Enumerated(EnumType.STRING)
@@ -44,7 +45,21 @@ public class Orders extends BaseEntity implements Serializable {
   @Enumerated(EnumType.STRING)
   private PaymentMethod paymentMethod;
 
+  public void updateInfor(Customer customer, User user, Float totalAmount) {
+    this.customer = customer;
+    this.user = user;
+    this.totalAmount = totalAmount;
+  }
+
   public void updateDelivery(DeliveryStatus deliveryStatus) {
     this.deliveryStatus = deliveryStatus;
+  }
+
+  public void upsertOrderCode(String code) {
+    this.orderCode = code;
+  }
+
+  public void updatePaymentMethod(PaymentMethod paymentMethod) {
+    this.paymentMethod = paymentMethod;
   }
 }

@@ -17,4 +17,9 @@ public class PaymentServiceImpl implements PaymentService {
   public void savePayment(Payment payment) {
     paymentRepository.save(payment);
   }
+
+  @Override
+  public Payment findByOrderId(Long id) {
+    return paymentRepository.findByOrderId(id).orElse(null);
+  }
 }

@@ -17,8 +17,7 @@ public class GemDTO {
   private String color;
   private String clarity;
   private String cut;
-  private Long priceSell;
-  private Float weight;
-  private Long quantity;
+  private Float priceSell;
+  private Float carat;
   private Float totalPrice;
 }

@@ -21,9 +21,9 @@ public interface GemPriceRepository extends JpaRepository<GemPriceList, Long> {
               + "AND gpl.clarity = g.clarity "
               + "AND gpl.cut = g.cut "
               + "AND gpl.carat = g.carat "
-              + "WHERE gpl.effect_date >  :currentTimestamp "
+              + "WHERE gpl.effect_date <  :currentTimestamp "
               + "AND g.id = :gemId "
-              + "ORDER BY gpl.effect_date ASC LIMIT 1",
+              + "ORDER BY gpl.effect_date DESC LIMIT 1",
       nativeQuery = true)
   Optional<GemPriceList> findGemPriceListByGemId(
       @Param("gemId") Long gemId, @Param("currentTimestamp") long currentTimestamp);

@@ -10,4 +10,6 @@ public interface ProductService {
   Page<Product> findByFilter(ProductCriteria criteria);
 
   Product findByProductCode(String code);
+
+  void deactivateProduct(Long productId);
 }

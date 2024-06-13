@@ -1,5 +1,6 @@
 package com.swp391.JewelrySalesSystem.specifications;
 
+import com.swp391.JewelrySalesSystem.entity.Gem;
 import com.swp391.JewelrySalesSystem.entity.Product;
 import com.swp391.JewelrySalesSystem.entity.ProductCategory;
 import com.swp391.JewelrySalesSystem.enums.CategoryType;
@@ -43,5 +44,10 @@ public class ProductSpecifications {
       }
       return criteriaBuilder.like(root.get("productCode"), "%" + productCode + "%");
     };
+  }
+
+  public static Specification<Gem> filterByIsDiamondJewelry() {
+    return (root, query, criteriaBuilder) ->
+        criteriaBuilder.equal(root.get("isDiamondJewelry"), false);
   }
 }

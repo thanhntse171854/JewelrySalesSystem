@@ -35,6 +35,6 @@ public class Gem extends BaseEntity implements Serializable {
   @Column(name = "carat")
   private Float carat;
 
-  @Column(name = "quantity")
-  private Long quantity;
+  @Column(name = "is_jewelry")
+  private boolean isDiamondJewelry;
 }
