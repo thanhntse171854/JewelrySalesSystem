@@ -84,6 +84,7 @@ public class OrderController {
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<List<OrderResponse>> getOrderBySeller(@PathVariable("staffId") Long staffId) {
+
     return this.orderFacade.getOrderProductBySeller(staffId);
   }
 
