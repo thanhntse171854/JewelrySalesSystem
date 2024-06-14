@@ -6,4 +6,6 @@ import com.swp391.JewelrySalesSystem.response.LoginResponse;
 
 public interface UserFacade {
   BaseResponse<LoginResponse> login(LoginRequest request);
+
+  void logout();
 }

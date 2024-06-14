@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class SizeException extends RuntimeException {
+public class MaterialException extends RuntimeException {
   private final String errorCode;
   private final String message;
 
-  public SizeException(ErrorCode errorCode) {
+  public MaterialException(ErrorCode errorCode) {
     super(errorCode.name());
     this.errorCode = errorCode.getCode();
     this.message = errorCode.getMessage();

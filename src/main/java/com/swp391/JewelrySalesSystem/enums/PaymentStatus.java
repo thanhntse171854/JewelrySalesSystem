@@ -3,6 +3,7 @@ package com.swp391.JewelrySalesSystem.enums;
 public enum PaymentStatus {
   PENDING,
   SUCCESS,
+  NONE,
   FAIL;
 
   public boolean isPending() {
@@ -15,5 +16,9 @@ public enum PaymentStatus {
 
   public boolean isFail() {
     return PaymentStatus.FAIL == this;
+  }
+
+  public boolean isNone() {
+    return PaymentStatus.NONE == this;
   }
 }

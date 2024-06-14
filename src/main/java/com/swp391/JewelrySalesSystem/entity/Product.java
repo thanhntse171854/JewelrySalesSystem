@@ -58,4 +58,12 @@ public class Product extends BaseEntity implements Serializable {
 
   @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<ProductAsset> productAssets = new ArrayList<>();
+
+  public void addProductMaterial(ProductMaterial productMaterial) {
+    this.productMaterials.add(productMaterial);
+  }
+
+  public void addProductAsset(ProductAsset productAsset) {
+    this.productAssets.add(productAsset);
+  }
 }

@@ -1,5 +1,6 @@
 package com.swp391.JewelrySalesSystem.entity;
 
+import com.swp391.JewelrySalesSystem.enums.PaymentStatus;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -33,6 +34,10 @@ public class PurchaseOrder extends BaseEntity implements Serializable {
 
   @Column(name = "total_price")
   private Float totalPrice;
+
+  @Column(name = "status")
+  @Enumerated(EnumType.STRING)
+  private PaymentStatus paymentStatus;
 
   @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @Builder.Default

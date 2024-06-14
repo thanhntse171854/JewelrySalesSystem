@@ -2,6 +2,8 @@ package com.swp391.JewelrySalesSystem.facade.impl;
 
 import com.swp391.JewelrySalesSystem.entity.*;
 import com.swp391.JewelrySalesSystem.enums.*;
+import com.swp391.JewelrySalesSystem.exception.OrderExcetpion;
+import com.swp391.JewelrySalesSystem.exception.PaymentException;
 import com.swp391.JewelrySalesSystem.facade.OrderFacade;
 import com.swp391.JewelrySalesSystem.request.PaymentRequest;
 import com.swp391.JewelrySalesSystem.request.UpsertOrderRequest;
@@ -65,8 +67,8 @@ public class OrderFacadeImpl implements OrderFacade {
               .orderCode(order.getOrderCode())
               .name(order.getCustomer().getName())
               .phone(order.getCustomer().getPhone())
-                  .deliveryStatus(order.getDeliveryStatus())
-                  .paymentMethod(order.getPaymentMethod())
+              .deliveryStatus(order.getDeliveryStatus())
+              .paymentMethod(order.getPaymentMethod())
               .totalPrice(order.getTotalAmount())
               .build());
     }
@@ -77,31 +79,39 @@ public class OrderFacadeImpl implements OrderFacade {
   public BaseResponse<Void> payment(PaymentRequest request) {
     Orders orders = orderService.findOrderById(request.getOrderId());
     Customer customer = customerService.findByPhone(request.getCustomerPhone());
+    Payment payment = paymentService.findByOrderId(request.getOrderId());
 
     if (request.getPaymentMethod().isCash()) {
-      Float totalAmount = (request.getAmount() + customer.getTotalAmountPurchased());
+      Float totalAmount = request.getAmount() + customer.getTotalAmountPurchased();
       customer.updateDiscount(totalAmount);
       customer.updateTotalAmountPurchase(totalAmount);
       customerService.save(customer);
       orders.updatePaymentMethod(request.getPaymentMethod());
       orderService.save(orders);
     }
-    Payment payment = paymentService.findByOrderId(request.getOrderId());
-
-    if (request.getAmount().equals(orders.getTotalAmount()) && payment == null) {
-      paymentService.savePayment(
-          Payment.builder()
-              .paymentCode("PM" + generatePaymentCode())
-              .order(orders)
-              .status(PaymentStatus.SUCCESS)
-              .totalPrice(request.getAmount())
-              .build());
+    boolean isValidAmount = request.getAmount().equals(orders.getTotalAmount());
+    if (isValidAmount) {
+      if (payment == null) {
+        payment =
+            Payment.builder()
+                .paymentCode("PM" + generatePaymentCode())
+                .order(orders)
+                .status(PaymentStatus.SUCCESS)
+                .payemntType(PayemntType.ORDER_SELL)
+                .totalPrice(request.getAmount())
+                .build();
+      } else {
+        payment.updateStatus(PaymentStatus.SUCCESS);
+      }
+      paymentService.savePayment(payment);
       return BaseResponse.ok();
+    } else {
+      if (payment != null) {
+        payment.updateStatus(PaymentStatus.PENDING);
+        paymentService.savePayment(payment);
+      }
+      throw new PaymentException(ErrorCode.PAYMENT_FAIL);
     }
-
-    payment.updateStatus(PaymentStatus.PENDING);
-    paymentService.savePayment(payment);
-    return BaseResponse.fail();
   }
 
   @Override
@@ -111,7 +121,7 @@ public class OrderFacadeImpl implements OrderFacade {
       orderService.delete(orders.getId());
       return BaseResponse.ok();
     }
-    return BaseResponse.fail();
+    throw new OrderExcetpion(ErrorCode.ORDER_DELETE_FAIL);
   }
 
   @Override
@@ -147,7 +157,7 @@ public class OrderFacadeImpl implements OrderFacade {
     }
     orders.updateDelivery(DeliveryStatus.FAIL);
     orderService.save(orders);
-    return BaseResponse.fail();
+    throw new OrderExcetpion(ErrorCode.ORDER_ASSIGNED);
   }
 
   @Override

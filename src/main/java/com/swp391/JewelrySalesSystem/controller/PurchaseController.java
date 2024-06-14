@@ -2,6 +2,7 @@ package com.swp391.JewelrySalesSystem.controller;
 
 import com.swp391.JewelrySalesSystem.facade.PurchaseFacade;
 import com.swp391.JewelrySalesSystem.request.GemFilterRequest;
+import com.swp391.JewelrySalesSystem.request.PaymentRequest;
 import com.swp391.JewelrySalesSystem.request.PurchaseOrderRequest;
 import com.swp391.JewelrySalesSystem.request.ValidateOrderRequest;
 import com.swp391.JewelrySalesSystem.response.*;
@@ -21,7 +22,7 @@ public class PurchaseController {
 
   private final PurchaseFacade purchaseFacade;
 
-  @PostMapping("/validate-order")
+  @PostMapping("/validate")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       summary = "Validate order",
@@ -36,12 +37,23 @@ public class PurchaseController {
   @PostMapping("/create")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
-      summary = "Create purchase order",
+      summary = "Create purchase order by Seller",
       tags = {"Purchase Order APIs"})
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<Void> createPurchase(@RequestBody @Nullable PurchaseOrderRequest request) {
     return this.purchaseFacade.createPurchase(request);
+  }
+
+  @PostMapping("/payment")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Payment purchase order",
+      tags = {"Purchase Order APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("hasRole('ROLE_CASHIER_STAFF')")
+  public BaseResponse<Void> payment(@RequestBody PaymentRequest request) {
+    return this.purchaseFacade.payment(request);
   }
 
   @GetMapping("/prices")
