@@ -5,13 +5,13 @@ import com.swp391.JewelrySalesSystem.request.UpsertOrderRequest;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
 import com.swp391.JewelrySalesSystem.response.OrderDetailResponse;
 import com.swp391.JewelrySalesSystem.response.OrderHistoryResponse;
-import com.swp391.JewelrySalesSystem.response.OrderRepsone;
+import com.swp391.JewelrySalesSystem.response.OrderResponse;
 import java.util.List;
 
 public interface OrderFacade {
   BaseResponse<Void> orderProduct(UpsertOrderRequest request);
 
-  BaseResponse<List<OrderRepsone>> getOrderProductBySeller(Long staffId);
+  BaseResponse<List<OrderResponse>> getOrderProductBySeller(Long staffId);
 
   BaseResponse<Void> deleteOderByKey(String code);
 

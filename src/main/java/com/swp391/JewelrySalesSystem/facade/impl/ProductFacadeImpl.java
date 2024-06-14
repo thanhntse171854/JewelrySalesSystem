@@ -51,8 +51,7 @@ public class ProductFacadeImpl implements ProductFacade {
 
   private ProductResponse buildProductResponse(Product product) {
     float totalPrice = calculateTotalPrice(product);
-    String productImage =
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIgUj8mrkUcIsa9f-JmK1Tr7wzP2mZKBFKVw&s";
+    String productImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/832px-No-Image-Placeholder.svg.png";
 
     if (product.getProductAssets() != null && !product.getProductAssets().isEmpty()) {
       String mediaUrl = product.getProductAssets().get(0).getMediaUrl();
@@ -66,6 +65,7 @@ public class ProductFacadeImpl implements ProductFacade {
         .productName(product.getProductName())
         .productImage(productImage)
         .productPrice(totalPrice)
+        .size(product.getSize())
         .build();
   }
 
@@ -87,6 +87,7 @@ public class ProductFacadeImpl implements ProductFacade {
         .productAsset(productAsset)
         .totalPrice(totalPrice)
         .gem(gemDTOS)
+            .size(product.getSize())
         .build();
   }
 

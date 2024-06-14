@@ -56,15 +56,17 @@ public class OrderFacadeImpl implements OrderFacade {
   }
 
   @Override
-  public BaseResponse<List<OrderRepsone>> getOrderProductBySeller(Long id) {
+  public BaseResponse<List<OrderResponse>> getOrderProductBySeller(Long id) {
     List<Orders> orders = orderService.findOrderBySeller(id);
-    List<OrderRepsone> list = new ArrayList<>();
+    List<OrderResponse> list = new ArrayList<>();
     for (var order : orders) {
       list.add(
-          OrderRepsone.builder()
+          OrderResponse.builder()
               .orderCode(order.getOrderCode())
               .name(order.getCustomer().getName())
               .phone(order.getCustomer().getPhone())
+                  .deliveryStatus(order.getDeliveryStatus())
+                  .paymentMethod(order.getPaymentMethod())
               .totalPrice(order.getTotalAmount())
               .build());
     }

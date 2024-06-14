@@ -6,7 +6,7 @@ import com.swp391.JewelrySalesSystem.request.UpsertOrderRequest;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
 import com.swp391.JewelrySalesSystem.response.OrderDetailResponse;
 import com.swp391.JewelrySalesSystem.response.OrderHistoryResponse;
-import com.swp391.JewelrySalesSystem.response.OrderRepsone;
+import com.swp391.JewelrySalesSystem.response.OrderResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
@@ -83,7 +83,7 @@ public class OrderController {
       tags = {"Sell Order APIs"})
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("isAuthenticated()")
-  public BaseResponse<List<OrderRepsone>> getOrderBySeller(@PathVariable("staffId") Long staffId) {
+  public BaseResponse<List<OrderResponse>> getOrderBySeller(@PathVariable("staffId") Long staffId) {
     return this.orderFacade.getOrderProductBySeller(staffId);
   }
 

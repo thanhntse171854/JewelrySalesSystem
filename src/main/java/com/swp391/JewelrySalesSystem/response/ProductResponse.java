@@ -1,5 +1,6 @@
 package com.swp391.JewelrySalesSystem.response;
 
+import com.swp391.JewelrySalesSystem.enums.Size;
 import lombok.*;
 
 @Getter
@@ -12,4 +13,5 @@ public class ProductResponse {
   private String productName;
   private float productPrice;
   private String productImage;
+  private Size size;
 }
