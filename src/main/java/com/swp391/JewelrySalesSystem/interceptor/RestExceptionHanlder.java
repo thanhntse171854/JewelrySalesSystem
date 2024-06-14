@@ -3,6 +3,7 @@ package com.swp391.JewelrySalesSystem.interceptor;
 import com.swp391.JewelrySalesSystem.enums.ErrorCode;
 import com.swp391.JewelrySalesSystem.exception.EntityNotFoundException;
 import com.swp391.JewelrySalesSystem.exception.LoginException;
+import com.swp391.JewelrySalesSystem.exception.OrderExcetpion;
 import com.swp391.JewelrySalesSystem.exception.SizeException;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
 import com.swp391.JewelrySalesSystem.response.ExceptionResponse;
@@ -52,13 +53,15 @@ public class RestExceptionHanlder extends ResponseEntityExceptionHandler {
         HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler(SizeException.class)
+  @ExceptionHandler(OrderExcetpion.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   private ResponseEntity<BaseResponse<ExceptionResponse>> handleOTPException(
-      SizeException sizeException) {
+          OrderExcetpion orderExcetpion) {
     return new ResponseEntity<>(
         BaseResponse.build(
-            new ExceptionResponse(sizeException.getErrorCode(), sizeException.getMessage()), false),
+            new ExceptionResponse(orderExcetpion.getErrorCode(), orderExcetpion.getMessage()), false),
         HttpStatus.BAD_REQUEST);
   }
+
+
 }

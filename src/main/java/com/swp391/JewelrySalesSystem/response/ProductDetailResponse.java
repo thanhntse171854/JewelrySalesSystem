@@ -4,6 +4,8 @@ import com.swp391.JewelrySalesSystem.dto.GemDTO;
 import com.swp391.JewelrySalesSystem.dto.MaterialDTO;
 import com.swp391.JewelrySalesSystem.enums.Gender;
 import java.util.List;
+
+import com.swp391.JewelrySalesSystem.enums.Size;
 import lombok.*;
 
 @Getter
@@ -19,6 +21,7 @@ public class ProductDetailResponse {
   private Long productionCost;
   private Gender gender;
   private String category;
+  private Size size;
   private ProductAssetResponse productAsset;
   private List<MaterialDTO> materials;
   private Float totalPrice;
