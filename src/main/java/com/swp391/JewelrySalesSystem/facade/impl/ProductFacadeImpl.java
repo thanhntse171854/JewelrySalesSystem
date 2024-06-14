@@ -4,17 +4,20 @@ import com.swp391.JewelrySalesSystem.dto.GemDTO;
 import com.swp391.JewelrySalesSystem.dto.MaterialDTO;
 import com.swp391.JewelrySalesSystem.entity.*;
 import com.swp391.JewelrySalesSystem.enums.CategoryType;
+import com.swp391.JewelrySalesSystem.enums.ErrorCode;
+import com.swp391.JewelrySalesSystem.exception.ProductException;
 import com.swp391.JewelrySalesSystem.facade.ProductFacade;
+import com.swp391.JewelrySalesSystem.request.CreateProductRequest;
 import com.swp391.JewelrySalesSystem.request.ProductCriteria;
 import com.swp391.JewelrySalesSystem.response.*;
-import com.swp391.JewelrySalesSystem.service.PriceService;
-import com.swp391.JewelrySalesSystem.service.ProductCategoryService;
-import com.swp391.JewelrySalesSystem.service.ProductService;
+import com.swp391.JewelrySalesSystem.service.*;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +25,8 @@ public class ProductFacadeImpl implements ProductFacade {
   private final ProductService productService;
   private final PriceService priceService;
   private final ProductCategoryService productCategoryService;
+  private final MaterialService materialService;
+  private final CloudinaryService cloudinaryService;
 
   @Override
   public BaseResponse<PaginationResponse<List<ProductResponse>>> findByFilter(
@@ -51,7 +56,8 @@ public class ProductFacadeImpl implements ProductFacade {
 
   private ProductResponse buildProductResponse(Product product) {
     float totalPrice = calculateTotalPrice(product);
-    String productImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/832px-No-Image-Placeholder.svg.png";
+    String productImage =
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/832px-No-Image-Placeholder.svg.png";
 
     if (product.getProductAssets() != null && !product.getProductAssets().isEmpty()) {
       String mediaUrl = product.getProductAssets().get(0).getMediaUrl();
@@ -87,7 +93,7 @@ public class ProductFacadeImpl implements ProductFacade {
         .productAsset(productAsset)
         .totalPrice(totalPrice)
         .gem(gemDTOS)
-            .size(product.getSize())
+        .size(product.getSize())
         .build();
   }
 
@@ -202,5 +208,67 @@ public class ProductFacadeImpl implements ProductFacade {
                   .build();
             })
         .toList();
+  }
+
+  @SneakyThrows
+  @Override
+  public BaseResponse<Void> createProduct(
+      CreateProductRequest request, List<MultipartFile> images) {
+    if (productService.findByProductCode(request.getProductCode()) != null)
+      throw new ProductException(ErrorCode.PRODUCT_IS_EXIST);
+
+    ProductCategory productCategory = productCategoryService.findById(request.getCategoryId());
+
+    Product product =
+        Product.builder()
+            .productCode(request.getProductCode())
+            .productName(request.getProductName())
+            .gemCost(request.getGemCost())
+            .productionCost(request.getProductionCost())
+            .gender(request.getGender())
+            .category(productCategory)
+            .isGem(true)
+            .size(request.getSize())
+            .build();
+
+    if (request.getMaterialProductRequests() != null) {
+      for (var materialP : request.getMaterialProductRequests()) {
+        Material material = materialService.findById(materialP.getMaterial());
+        ProductMaterial productMaterial =
+            ProductMaterial.builder()
+                .product(product)
+                .material(material)
+                .weight(materialP.getWeight())
+                .build();
+
+        product.addProductMaterial(productMaterial);
+      }
+    }
+
+    for (MultipartFile file : images) {
+      String url = cloudinaryService.uploadImage(file.getBytes());
+
+      ProductAsset productAsset =
+          ProductAsset.builder()
+              .mediaKey(file.getOriginalFilename())
+              .mediaUrl(url)
+              .product(product)
+              .build();
+
+      product.getProductAssets().add(productAsset);
+    }
+
+    productService.save(product);
+    return BaseResponse.ok();
+  }
+
+  @Override
+  public BaseResponse<Void> deleteProduct(String code) {
+    Product product = productService.findByProductCode(code);
+    if (product == null) {
+      throw new ProductException(ErrorCode.PRODUCT_NOT_FOUND_OR_DELETED);
+    }
+    productService.deactivateProduct(product.getId());
+    return BaseResponse.ok();
   }
 }

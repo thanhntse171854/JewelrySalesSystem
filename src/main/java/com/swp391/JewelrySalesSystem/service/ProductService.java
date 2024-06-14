@@ -12,4 +12,6 @@ public interface ProductService {
   Product findByProductCode(String code);
 
   void deactivateProduct(Long productId);
+
+  void save(Product product);
 }

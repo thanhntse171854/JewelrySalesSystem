@@ -55,9 +55,19 @@ public class UserFacadeImpl implements UserFacade {
     return LoginResponse.builder()
         .id(user.getId())
         .phone(user.getPhone())
+        .name(user.getName())
         .accessToken(accessToken)
         .refreshToken(refreshToken)
         .roleUsers(roleUsers)
         .build();
+  }
+
+  @Override
+  public void logout() {
+    var principal =
+        (SecurityAccountDetails)
+            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user = userService.findById(principal.getId());
+    tokenService.deleteRefreshToken(user.getId());
   }
 }

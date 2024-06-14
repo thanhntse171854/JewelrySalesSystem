@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class LoginResponse {
   private Long id;
   private String phone;
+  private String name;
   private String accessToken;
   private String refreshToken;
   private List<RoleUser> roleUsers;

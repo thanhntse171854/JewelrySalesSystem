@@ -1,8 +1,14 @@
 package com.swp391.JewelrySalesSystem.facade.impl;
 
 import com.swp391.JewelrySalesSystem.entity.*;
+import com.swp391.JewelrySalesSystem.enums.ErrorCode;
+import com.swp391.JewelrySalesSystem.enums.PayemntType;
+import com.swp391.JewelrySalesSystem.enums.PaymentStatus;
+import com.swp391.JewelrySalesSystem.exception.OrderExcetpion;
+import com.swp391.JewelrySalesSystem.exception.PaymentException;
 import com.swp391.JewelrySalesSystem.facade.PurchaseFacade;
 import com.swp391.JewelrySalesSystem.request.GemFilterRequest;
+import com.swp391.JewelrySalesSystem.request.PaymentRequest;
 import com.swp391.JewelrySalesSystem.request.PurchaseOrderRequest;
 import com.swp391.JewelrySalesSystem.request.ValidateOrderRequest;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
@@ -11,6 +17,7 @@ import com.swp391.JewelrySalesSystem.response.OrderHistoryResponse;
 import com.swp391.JewelrySalesSystem.service.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +30,15 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
   private final ProductService productService;
   private final PurchaseService purchaseService;
   private final PriceService priceService;
+  private final CustomerService customerService;
+  private final PaymentService paymentService;
 
   @Override
   public BaseResponse<OrderHistoryResponse> validateOrder(ValidateOrderRequest request) {
     Orders orders =
         orderService.findOrderByPhoneAndCode(request.getOrderCode(), request.getPhone());
     if (orders == null) {
-      return BaseResponse.fail();
+      throw new OrderExcetpion(ErrorCode.ORDER_NOT_FOUND);
     }
     return BaseResponse.build(
         OrderHistoryResponse.builder()
@@ -54,6 +63,7 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
             .phone(request.getPhone())
             .isProductStore(request.isProductStore())
             .totalPrice(request.getTotalPrice())
+            .paymentStatus(PaymentStatus.NONE)
             .build();
 
     for (var purchase : request.getList()) {
@@ -74,7 +84,7 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
                   .origin((purchase.getOrigin() != null) ? purchase.getOrigin() : null)
                   .material(
                       (purchase.getMaterialId() != null)
-                          ? materialService.findById(purchase.getMaterialId()).orElse(null)
+                          ? materialService.findById(purchase.getMaterialId())
                           : null)
                   .weight((purchase.getWeight() != null) ? purchase.getWeight() : null)
                   .purchaseOrder(purchaseOrder)
@@ -109,5 +119,51 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
                         .build())
             .toList();
     return BaseResponse.build(gemPriceResponseList, true);
+  }
+
+  @Override
+  public BaseResponse<Void> payment(PaymentRequest request) {
+    Orders orders = orderService.findOrderById(request.getOrderId());
+    Customer customer = customerService.findByPhone(request.getCustomerPhone());
+
+    if (request.getPaymentMethod().isCash()) {
+      Float totalAmount = (request.getAmount() + customer.getTotalAmountPurchased());
+      customer.updateDiscount(totalAmount);
+      customer.updateTotalAmountPurchase(totalAmount);
+      customerService.save(customer);
+      orders.updatePaymentMethod(request.getPaymentMethod());
+      orderService.save(orders);
+    }
+    Payment payment = paymentService.findByOrderId(request.getOrderId());
+
+    boolean isValidAmount = request.getAmount().equals(orders.getTotalAmount());
+    if (isValidAmount) {
+      if (payment == null) {
+        payment =
+            Payment.builder()
+                .paymentCode("PM" + generatePaymentCode())
+                .order(orders)
+                .status(PaymentStatus.SUCCESS)
+                .payemntType(PayemntType.ORDER_PURCHASE)
+                .totalPrice(request.getAmount())
+                .build();
+      } else {
+        payment.updateStatus(PaymentStatus.SUCCESS);
+      }
+      paymentService.savePayment(payment);
+      return BaseResponse.ok();
+    } else {
+      if (payment != null) {
+        payment.updateStatus(PaymentStatus.PENDING);
+        paymentService.savePayment(payment);
+      }
+      throw new PaymentException(ErrorCode.PAYMENT_FAIL);
+    }
+  }
+
+  private String generatePaymentCode() {
+    Random random = new Random();
+    int otp = random.nextInt(9999);
+    return String.format("%06d", otp);
   }
 }

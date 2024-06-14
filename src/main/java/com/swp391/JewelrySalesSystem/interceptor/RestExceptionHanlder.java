@@ -1,10 +1,7 @@
 package com.swp391.JewelrySalesSystem.interceptor;
 
 import com.swp391.JewelrySalesSystem.enums.ErrorCode;
-import com.swp391.JewelrySalesSystem.exception.EntityNotFoundException;
-import com.swp391.JewelrySalesSystem.exception.LoginException;
-import com.swp391.JewelrySalesSystem.exception.OrderExcetpion;
-import com.swp391.JewelrySalesSystem.exception.SizeException;
+import com.swp391.JewelrySalesSystem.exception.*;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
 import com.swp391.JewelrySalesSystem.response.ExceptionResponse;
 import org.springframework.http.HttpStatus;
@@ -30,7 +27,7 @@ public class RestExceptionHanlder extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(EntityNotFoundException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  private ResponseEntity<BaseResponse<ExceptionResponse>> handleOTPException(
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleEntityException(
       EntityNotFoundException entityNotFoundException) {
     return new ResponseEntity<>(
         BaseResponse.build(
@@ -55,13 +52,68 @@ public class RestExceptionHanlder extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(OrderExcetpion.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  private ResponseEntity<BaseResponse<ExceptionResponse>> handleOTPException(
-          OrderExcetpion orderExcetpion) {
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleOrderException(
+      OrderExcetpion orderExcetpion) {
     return new ResponseEntity<>(
         BaseResponse.build(
-            new ExceptionResponse(orderExcetpion.getErrorCode(), orderExcetpion.getMessage()), false),
+            new ExceptionResponse(orderExcetpion.getErrorCode(), orderExcetpion.getMessage()),
+            false),
         HttpStatus.BAD_REQUEST);
   }
 
+  @ExceptionHandler(PaymentException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handlePaymentException(
+      PaymentException paymentException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(paymentException.getErrorCode(), paymentException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
 
+  @ExceptionHandler(MaterialException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleMaterialException(
+      MaterialException materialException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(materialException.getErrorCode(), materialException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(PriceListException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handlePriceException(
+      PriceListException priceListException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(
+                priceListException.getErrorCode(), priceListException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(ProductException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleProductException(
+      ProductException productException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(productException.getErrorCode(), productException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(CategoryException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleProductException(
+      CategoryException categoryException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(categoryException.getErrorCode(), categoryException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
 }

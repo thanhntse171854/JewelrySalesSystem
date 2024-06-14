@@ -62,4 +62,9 @@ public class ProductServiceImpl implements ProductService {
   public void deactivateProduct(Long productId) {
     productRepository.deactivateProductById(productId);
   }
+
+  @Override
+  public void save(Product product) {
+    productRepository.save(product);
+  }
 }

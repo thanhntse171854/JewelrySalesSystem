@@ -54,7 +54,7 @@ public class OrderController {
     return this.orderFacade.deleteOderByKey(code);
   }
 
-  @PostMapping("/order/payment")
+  @PostMapping("/payment")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       summary = "Payment order",

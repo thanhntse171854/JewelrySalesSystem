@@ -1,10 +1,11 @@
 package com.swp391.JewelrySalesSystem.service.impl;
 
 import com.swp391.JewelrySalesSystem.entity.Material;
+import com.swp391.JewelrySalesSystem.enums.ErrorCode;
+import com.swp391.JewelrySalesSystem.exception.MaterialException;
 import com.swp391.JewelrySalesSystem.repository.MaterialRepository;
 import com.swp391.JewelrySalesSystem.service.MaterialService;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,9 @@ public class MaterialServiceImpl implements MaterialService {
   }
 
   @Override
-  public Optional<Material> findById(Long id) {
-    return materialRepository.findById(id);
+  public Material findById(Long id) {
+    return materialRepository
+        .findById(id)
+        .orElseThrow(() -> new MaterialException(ErrorCode.MATERIAL_NOT_FOUND));
   }
 }

@@ -3,9 +3,8 @@ package com.swp391.JewelrySalesSystem.response;
 import com.swp391.JewelrySalesSystem.dto.GemDTO;
 import com.swp391.JewelrySalesSystem.dto.MaterialDTO;
 import com.swp391.JewelrySalesSystem.enums.Gender;
-import java.util.List;
-
 import com.swp391.JewelrySalesSystem.enums.Size;
+import java.util.List;
 import lombok.*;
 
 @Getter

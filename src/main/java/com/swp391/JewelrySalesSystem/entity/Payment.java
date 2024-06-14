@@ -1,5 +1,6 @@
 package com.swp391.JewelrySalesSystem.entity;
 
+import com.swp391.JewelrySalesSystem.enums.PayemntType;
 import com.swp391.JewelrySalesSystem.enums.PaymentStatus;
 import jakarta.persistence.*;
 import java.io.Serializable;
@@ -25,6 +26,10 @@ public class Payment extends BaseEntity implements Serializable {
   @Column(name = "status")
   @Enumerated(EnumType.STRING)
   private PaymentStatus status;
+
+  @Column(name = "payment_type")
+  @Enumerated(EnumType.STRING)
+  private PayemntType payemntType;
 
   @Column(name = "total_price")
   private Float totalPrice;

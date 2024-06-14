@@ -1,6 +1,7 @@
 package com.swp391.JewelrySalesSystem.facade;
 
 import com.swp391.JewelrySalesSystem.request.GemFilterRequest;
+import com.swp391.JewelrySalesSystem.request.PaymentRequest;
 import com.swp391.JewelrySalesSystem.request.PurchaseOrderRequest;
 import com.swp391.JewelrySalesSystem.request.ValidateOrderRequest;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
@@ -14,4 +15,6 @@ public interface PurchaseFacade {
   BaseResponse<Void> createPurchase(PurchaseOrderRequest request);
 
   BaseResponse<List<GemPriceResponse>> getGemByFilter(GemFilterRequest request);
+
+  BaseResponse<Void> payment(PaymentRequest request);
 }
