@@ -35,6 +35,21 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public List<User> findAll() {
+    return userRepository.findAll();
+  }
+
+  @Override
+  public void deactivateStaff(Long id) {
+    userRepository.deactivateStaffById(id);
+  }
+
+  @Override
+  public void save(User user) {
+    userRepository.save(user);
+  }
+
+  @Override
   public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
     User user =
         userRepository

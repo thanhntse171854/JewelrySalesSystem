@@ -5,16 +5,14 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Setter
 @Getter
 public class User extends BaseEntity implements Serializable {
   @Column(name = "email", nullable = false, unique = true)
@@ -61,4 +59,8 @@ public class User extends BaseEntity implements Serializable {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @Builder.Default
   private List<Orders> orders = new ArrayList<>();
+
+  public void updateRole(List<Role> role) {
+    this.roles = role;
+  }
 }

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 public class PurchaseOrderRequest {
+  private String purchaseOrderCode;
   private Long staffId;
   private String customerName;
   private String phone;

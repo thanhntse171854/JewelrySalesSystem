@@ -38,6 +38,10 @@ public class Customer extends BaseEntity implements Serializable {
   @Builder.Default
   private List<Orders> orders = new ArrayList<>();
 
+  @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<PurchaseOrder> purchaseOrders = new ArrayList<>();
+
   public void updateDiscount(Float total) {
     if (total >= 15000) {
       this.percentDiscount = 15.0f;
@@ -52,5 +56,17 @@ public class Customer extends BaseEntity implements Serializable {
 
   public void updateTotalAmountPurchase(Float totalAmountPurchased) {
     this.totalAmountPurchased = totalAmountPurchased;
+  }
+
+  public void updateName(String name) {
+    this.name = name;
+  }
+
+  public void addAddress(String address) {
+    this.address = address;
+  }
+
+  public void addBirthDate(Long dateOfBirth) {
+    this.dateOfBirth = dateOfBirth;
   }
 }

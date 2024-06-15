@@ -20,8 +20,12 @@ public class Payment extends BaseEntity implements Serializable {
   private String paymentCode;
 
   @OneToOne
-  @JoinColumn(name = "order_id", nullable = false, unique = true)
+  @JoinColumn(name = "order_id", unique = true)
   private Orders order;
+
+  @OneToOne
+  @JoinColumn(name = "purchase_order_id", unique = true)
+  private PurchaseOrder purchaseOrder;
 
   @Column(name = "status")
   @Enumerated(EnumType.STRING)

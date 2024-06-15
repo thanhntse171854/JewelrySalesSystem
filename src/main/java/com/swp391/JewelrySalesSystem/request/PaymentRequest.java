@@ -11,9 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentRequest {
+  private Long orderId;
   private String orderCode;
+  private String address;
+  private String name;
+  private Long dateOfBirth;
   private PaymentMethod paymentMethod;
   private Float amount;
-  private Long orderId;
   private String customerPhone;
 }

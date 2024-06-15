@@ -19,4 +19,5 @@ public class OrderHistoryResponse {
   private Long dateOrder;
   private PaymentMethod paymentMethod;
   private DeliveryStatus deliveryStatus;
+  private String customerPhone;
 }
