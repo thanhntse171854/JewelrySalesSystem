@@ -10,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderResponse {
+  private Long orderId;
   private String orderCode;
   private String phone;
   private String name;

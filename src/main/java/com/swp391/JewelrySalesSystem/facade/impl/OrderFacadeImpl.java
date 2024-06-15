@@ -64,6 +64,7 @@ public class OrderFacadeImpl implements OrderFacade {
     for (var order : orders) {
       list.add(
           OrderResponse.builder()
+              .orderId(order.getId())
               .orderCode(order.getOrderCode())
               .name(order.getCustomer().getName())
               .phone(order.getCustomer().getPhone())
@@ -81,14 +82,21 @@ public class OrderFacadeImpl implements OrderFacade {
     Customer customer = customerService.findByPhone(request.getCustomerPhone());
     Payment payment = paymentService.findByOrderId(request.getOrderId());
 
+    customer.updateName(request.getName());
+    customer.addAddress(request.getAddress());
+    customer.addBirthDate(request.getDateOfBirth());
+
     if (request.getPaymentMethod().isCash()) {
       Float totalAmount = request.getAmount() + customer.getTotalAmountPurchased();
       customer.updateDiscount(totalAmount);
       customer.updateTotalAmountPurchase(totalAmount);
-      customerService.save(customer);
+
       orders.updatePaymentMethod(request.getPaymentMethod());
       orderService.save(orders);
     }
+
+    customerService.save(customer);
+
     boolean isValidAmount = request.getAmount().equals(orders.getTotalAmount());
     if (isValidAmount) {
       if (payment == null) {
@@ -138,6 +146,7 @@ public class OrderFacadeImpl implements OrderFacade {
               .deliveryStatus(listOrder.getDeliveryStatus())
               .paymentMethod(listOrder.getPaymentMethod())
               .dateOrder(listOrder.getCreatedAt())
+              .customerPhone(listOrder.getCustomer().getPhone())
               .build());
     }
     return BaseResponse.build(orderHistoryResponses, true);
@@ -176,6 +185,8 @@ public class OrderFacadeImpl implements OrderFacade {
 
     return BaseResponse.build(
         OrderDetailResponse.builder()
+            .orderId(order.getId())
+            .orderCode(order.getOrderCode())
             .customerName(order.getCustomer().getName())
             .customerPhone(order.getCustomer().getPhone())
             .deliveryStatus(order.getDeliveryStatus())

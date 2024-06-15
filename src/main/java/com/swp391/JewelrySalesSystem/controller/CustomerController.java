@@ -5,6 +5,7 @@ import com.swp391.JewelrySalesSystem.response.BaseResponse;
 import com.swp391.JewelrySalesSystem.response.CustomerResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,5 +27,16 @@ public class CustomerController {
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<CustomerResponse> findCustomerByPhone(@PathVariable("phone") String phone) {
     return this.customerFacade.findByPhone(phone);
+  }
+
+  @GetMapping()
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Get all customer",
+      tags = {"Customer APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("hasRole('ROLE_MANAGER')")
+  public BaseResponse<List<CustomerResponse>> getAllCustomer() {
+    return this.customerFacade.getAllCustomer();
   }
 }

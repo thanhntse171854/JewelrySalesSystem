@@ -7,19 +7,24 @@ import com.swp391.JewelrySalesSystem.enums.RoleUser;
 import com.swp391.JewelrySalesSystem.exception.LoginException;
 import com.swp391.JewelrySalesSystem.facade.UserFacade;
 import com.swp391.JewelrySalesSystem.request.LoginRequest;
+import com.swp391.JewelrySalesSystem.request.UpdateProfileRequest;
+import com.swp391.JewelrySalesSystem.request.UpdateRoleRequest;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
+import com.swp391.JewelrySalesSystem.response.EmployeeResponse;
 import com.swp391.JewelrySalesSystem.response.LoginResponse;
+import com.swp391.JewelrySalesSystem.response.UserProfileResponse;
 import com.swp391.JewelrySalesSystem.security.SecurityAccountDetails;
-import com.swp391.JewelrySalesSystem.service.JWTService;
-import com.swp391.JewelrySalesSystem.service.TokenService;
-import com.swp391.JewelrySalesSystem.service.UserService;
+import com.swp391.JewelrySalesSystem.service.*;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Service
@@ -28,6 +33,8 @@ public class UserFacadeImpl implements UserFacade {
   private final JWTService jwtService;
   private final TokenService tokenService;
   private final AuthenticationManager authenticationManager;
+  private final CloudinaryService cloudinaryService;
+  private final RoleService roleService;
 
   @Override
   public BaseResponse<LoginResponse> login(LoginRequest loginRequest) {
@@ -43,6 +50,140 @@ public class UserFacadeImpl implements UserFacade {
 
     SecurityAccountDetails userPrinciple = (SecurityAccountDetails) authentication.getPrincipal();
     return BaseResponse.build(buildLoginResponse(userPrinciple, account), true);
+  }
+
+  @Override
+  public BaseResponse<UserProfileResponse> getProfile() {
+    var principal =
+        (SecurityAccountDetails)
+            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user = userService.findByPhone(principal.getPhone());
+
+    return BaseResponse.build(
+        UserProfileResponse.builder()
+            .id(user.getId())
+            .email(user.getEmail())
+            .name(user.getName())
+            .phone(user.getPhone())
+            .gender(user.getGender())
+            .avatar(user.getAvatar())
+            .address(user.getAddress())
+            .birthday(user.getDateOfBirth())
+            .roleUser(getRole(user))
+            .build(),
+        true);
+  }
+
+  @Override
+  public BaseResponse<UserProfileResponse> getProfileDetail(Long id) {
+    User user = userService.findById(id);
+
+    return BaseResponse.build(
+        UserProfileResponse.builder()
+            .id(user.getId())
+            .email(user.getEmail())
+            .name(user.getName())
+            .phone(user.getPhone())
+            .gender(user.getGender())
+            .avatar(user.getAvatar())
+            .address(user.getAddress())
+            .birthday(user.getDateOfBirth())
+            .roleUser(getRole(user))
+            .build(),
+        true);
+  }
+
+  @Override
+  public BaseResponse<UserProfileResponse> updateRole(UpdateRoleRequest request) {
+    User user = userService.findById(request.getId());
+    List<Role> roles = new ArrayList<>();
+    for (RoleUser roleEnum : request.getRoles()) {
+      Role role = roleService.findRole(roleEnum);
+      roles.add(role);
+    }
+    user.updateRole(roles);
+    userService.save(user);
+    return BaseResponse.ok();
+  }
+
+  @Override
+  public BaseResponse<UserProfileResponse> updateProfileByStaff(UpdateProfileRequest request) {
+    var principal =
+        (SecurityAccountDetails)
+            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user = userService.findByPhone(principal.getPhone());
+    if (request.getEmail() != null) {
+      user.setEmail(request.getEmail());
+    }
+    if (request.getGender() != null) {
+      user.setGender(request.getGender());
+    }
+    if (request.getAddress() != null) {
+      user.setAddress(request.getAddress());
+    }
+    if (request.getPhone() != null) {
+      user.setPhone(request.getPhone());
+    }
+    if (request.getBirthday() != null) {
+      user.setDateOfBirth(request.getBirthday());
+    }
+
+    userService.save(user);
+
+    return BaseResponse.build(
+        UserProfileResponse.builder()
+            .id(user.getId())
+            .email(user.getEmail())
+            .name(user.getName())
+            .phone(user.getPhone())
+            .gender(user.getGender())
+            .avatar(user.getAvatar())
+            .address(user.getAddress())
+            .birthday(user.getDateOfBirth())
+            .roleUser(getRole(user))
+            .build(),
+        true);
+  }
+
+  private List<RoleUser> getRole(User user) {
+    List<RoleUser> roles = new ArrayList<>();
+    for (var role : user.getRoles()) {
+      roles.add(role.getName());
+    }
+    return roles;
+  }
+
+  @Override
+  public BaseResponse<List<EmployeeResponse>> findAllStaff() {
+    List<User> users = userService.findAll();
+    List<EmployeeResponse> employeeResponses = new ArrayList<>();
+    for (var employee : users) {
+      employeeResponses.add(
+          EmployeeResponse.builder()
+              .staffId(employee.getId())
+              .name(employee.getName())
+              .phone(employee.getPhone())
+              .roles(getRole(employee))
+              .build());
+    }
+    return BaseResponse.build(employeeResponses, true);
+  }
+
+  @Override
+  public BaseResponse<Void> deactivateStaff(Long id) {
+    User user = userService.findById(id);
+    userService.deactivateStaff(user.getId());
+    return BaseResponse.ok();
+  }
+
+  @Override
+  @SneakyThrows
+  public BaseResponse<String> updateAvatar(Long id, MultipartFile file) {
+    String avatar = this.cloudinaryService.uploadImage(file.getBytes());
+    User user = userService.findById(id);
+    user.setAvatar(avatar);
+    userService.save(user);
+    return BaseResponse.build(avatar, true);
   }
 
   private LoginResponse buildLoginResponse(

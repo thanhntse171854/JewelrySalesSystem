@@ -19,7 +19,9 @@ public enum ErrorCode {
   MATERIAL_NOT_FOUND("1010", "Material not found"),
   PAYMENT_FAIL("1011", "Payment doesn't successful"),
   ORDER_DELETE_FAIL("1012", "The order has been paid and delivered"),
-  ORDER_ASSIGNED("1013", "The order has been delivered");
+  ORDER_ASSIGNED("1013", "The order has been delivered"),
+  UPLOAD_FAIL("1014", "Failed to upload image"),
+  ROLE_NOT_FOUND("1015", "Role not found");
 
   private final String code;
   private final String message;

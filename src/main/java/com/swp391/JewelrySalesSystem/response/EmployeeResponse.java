@@ -1,5 +1,7 @@
 package com.swp391.JewelrySalesSystem.response;
 
+import com.swp391.JewelrySalesSystem.enums.RoleUser;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,12 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Builder
-public class CustomerResponse {
-  private Long customerId;
+public class EmployeeResponse {
+  private Long staffId;
   private String name;
   private String phone;
-  private String address;
-  private Long dateOfBirth;
-  private Float percentDiscount;
-  private Float totalAmountPurchased;
+  private List<RoleUser> roles;
 }

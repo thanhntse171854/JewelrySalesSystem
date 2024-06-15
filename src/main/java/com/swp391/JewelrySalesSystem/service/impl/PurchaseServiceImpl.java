@@ -12,6 +12,11 @@ public class PurchaseServiceImpl implements PurchaseService {
   private final PurchaseRepository purchaseRepository;
 
   @Override
+  public PurchaseOrder findByPurchaseOrderCode(String code) {
+    return purchaseRepository.findByPurchaseOrderCode(code);
+  }
+
+  @Override
   public void save(PurchaseOrder purchaseOrder) {
     purchaseRepository.save(purchaseOrder);
   }

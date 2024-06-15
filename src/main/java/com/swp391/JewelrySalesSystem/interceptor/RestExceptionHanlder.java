@@ -116,4 +116,25 @@ public class RestExceptionHanlder extends ResponseEntityExceptionHandler {
             false),
         HttpStatus.BAD_REQUEST);
   }
+
+  @ExceptionHandler(UploadException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleProductException(
+      UploadException uploadException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(uploadException.getErrorCode(), uploadException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(RoleException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleProductException(
+      RoleException roleException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(roleException.getErrorCode(), roleException.getMessage()), false),
+        HttpStatus.BAD_REQUEST);
+  }
 }

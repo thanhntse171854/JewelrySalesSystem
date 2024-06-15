@@ -11,6 +11,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDetailResponse {
+  private Long orderId;
+  private String orderCode;
   private String customerName;
   private String customerPhone;
   private Long dateSell;

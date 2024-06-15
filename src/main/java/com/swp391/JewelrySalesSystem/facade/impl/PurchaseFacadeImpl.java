@@ -3,6 +3,7 @@ package com.swp391.JewelrySalesSystem.facade.impl;
 import com.swp391.JewelrySalesSystem.entity.*;
 import com.swp391.JewelrySalesSystem.enums.ErrorCode;
 import com.swp391.JewelrySalesSystem.enums.PayemntType;
+import com.swp391.JewelrySalesSystem.enums.PaymentMethod;
 import com.swp391.JewelrySalesSystem.enums.PaymentStatus;
 import com.swp391.JewelrySalesSystem.exception.OrderExcetpion;
 import com.swp391.JewelrySalesSystem.exception.PaymentException;
@@ -49,6 +50,7 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
             .totalPrice(orders.getTotalAmount())
             .deliveryStatus(orders.getDeliveryStatus())
             .paymentMethod(orders.getPaymentMethod())
+            .customerPhone(orders.getCustomer().getPhone())
             .build(),
         true);
   }
@@ -56,14 +58,21 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
   @Override
   public BaseResponse<Void> createPurchase(PurchaseOrderRequest request) {
     User user = userService.findById(request.getStaffId());
+    Customer customer = customerService.findByPhone(request.getPhone());
+    if (customer == null) {
+      customer =
+          Customer.builder().name(request.getCustomerName()).phone(request.getPhone()).build();
+      customerService.save(customer);
+    }
+
     var purchaseOrder =
         PurchaseOrder.builder()
+            .purchaseOrderCode(request.getPurchaseOrderCode())
             .user(user)
-            .customerName(request.getCustomerName())
-            .phone(request.getPhone())
+            .customer(customer)
             .isProductStore(request.isProductStore())
             .totalPrice(request.getTotalPrice())
-            .paymentStatus(PaymentStatus.NONE)
+            .paymentMethod(PaymentMethod.NONE)
             .build();
 
     for (var purchase : request.getList()) {
@@ -123,26 +132,32 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
 
   @Override
   public BaseResponse<Void> payment(PaymentRequest request) {
-    Orders orders = orderService.findOrderById(request.getOrderId());
+    PurchaseOrder purchaseOrder = purchaseService.findByPurchaseOrderCode(request.getOrderCode());
+    if (purchaseOrder == null) {
+      throw new OrderExcetpion(ErrorCode.ORDER_NOT_FOUND);
+    }
     Customer customer = customerService.findByPhone(request.getCustomerPhone());
 
-    if (request.getPaymentMethod().isCash()) {
-      Float totalAmount = (request.getAmount() + customer.getTotalAmountPurchased());
-      customer.updateDiscount(totalAmount);
-      customer.updateTotalAmountPurchase(totalAmount);
-      customerService.save(customer);
-      orders.updatePaymentMethod(request.getPaymentMethod());
-      orderService.save(orders);
-    }
+    if (request.getName() != null) customer.updateName(request.getName());
+
+    if (request.getAddress() != null) customer.addAddress(request.getAddress());
+
+    if (request.getAddress() != null) customer.addBirthDate(request.getDateOfBirth());
+
+    customerService.save(customer);
+
+    purchaseOrder.updatePaymentMethod(request.getPaymentMethod());
+    purchaseService.save(purchaseOrder);
+
     Payment payment = paymentService.findByOrderId(request.getOrderId());
 
-    boolean isValidAmount = request.getAmount().equals(orders.getTotalAmount());
+    boolean isValidAmount = request.getAmount().equals(purchaseOrder.getTotalPrice());
     if (isValidAmount) {
       if (payment == null) {
         payment =
             Payment.builder()
                 .paymentCode("PM" + generatePaymentCode())
-                .order(orders)
+                .purchaseOrder(purchaseOrder)
                 .status(PaymentStatus.SUCCESS)
                 .payemntType(PayemntType.ORDER_PURCHASE)
                 .totalPrice(request.getAmount())
