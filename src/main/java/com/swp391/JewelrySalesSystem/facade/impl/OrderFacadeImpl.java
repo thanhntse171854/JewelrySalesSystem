@@ -1,5 +1,7 @@
 package com.swp391.JewelrySalesSystem.facade.impl;
 
+import com.swp391.JewelrySalesSystem.dto.OrderDetailDTO;
+import com.swp391.JewelrySalesSystem.dto.OrderDetailProductDTO;
 import com.swp391.JewelrySalesSystem.entity.*;
 import com.swp391.JewelrySalesSystem.enums.*;
 import com.swp391.JewelrySalesSystem.exception.OrderExcetpion;
@@ -9,11 +11,21 @@ import com.swp391.JewelrySalesSystem.request.PaymentRequest;
 import com.swp391.JewelrySalesSystem.request.UpsertOrderRequest;
 import com.swp391.JewelrySalesSystem.response.*;
 import com.swp391.JewelrySalesSystem.service.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +36,9 @@ public class OrderFacadeImpl implements OrderFacade {
   private final CustomerService customerService;
   private final OrderService orderService;
   private final PaymentService paymentService;
+  private final SpringTemplateEngine springTemplateEngine;
+  private final DataMapperService dataMapperService;
+  private final DocumentService documentService;
 
   @Override
   public BaseResponse<Void> orderProduct(UpsertOrderRequest orderRequest) {
@@ -42,7 +57,7 @@ public class OrderFacadeImpl implements OrderFacade {
       customerService.save(customer);
     }
 
-    orders.updateInfor(customer, user, orderRequest.getTotalPrice());
+    orders.updateInfor(customer, user, orderRequest.getTotalPrice(), orderRequest.getDiscount());
 
     for (var order : orderRequest.getOrderList()) {
       Product product = productService.findByProductIdAndActive(order.getProductId());
@@ -71,6 +86,7 @@ public class OrderFacadeImpl implements OrderFacade {
               .deliveryStatus(order.getDeliveryStatus())
               .paymentMethod(order.getPaymentMethod())
               .totalPrice(order.getTotalAmount())
+              .discount(order.getDiscount())
               .build());
     }
     return BaseResponse.build(list, true);
@@ -158,7 +174,7 @@ public class OrderFacadeImpl implements OrderFacade {
     if (orders.getDeliveryStatus().isPending()) {
       orders.updateDelivery(DeliveryStatus.SUCCESS);
       for (var order : orders.getOrderDetails()) {
-        Product product = productService.findByProductIdAndActive(order.getId());
+        Product product = productService.findByProductIdAndActive(order.getProduct().getId());
         productService.deactivateProduct(product.getId());
       }
       orderService.save(orders);
@@ -167,6 +183,61 @@ public class OrderFacadeImpl implements OrderFacade {
     orders.updateDelivery(DeliveryStatus.FAIL);
     orderService.save(orders);
     throw new OrderExcetpion(ErrorCode.ORDER_ASSIGNED);
+  }
+
+  @Override
+  public ResponseEntity<byte[]> generateDocument(String orderCode) {
+    Orders orders = orderService.findByOrderCode(orderCode);
+
+    List<OrderDetailProductDTO> orderDetailProductDTOS = new ArrayList<>();
+    for (var order : orders.getOrderDetails()) {
+      orderDetailProductDTOS.add(
+          OrderDetailProductDTO.builder()
+              .name(order.getProduct().getProductName())
+              .code(order.getProduct().getProductCode())
+              .size(order.getProduct().getSize())
+              .price(order.getPrice())
+              .build());
+    }
+
+    Long createdAtMillis = orders.getCreatedAt();
+    LocalDateTime createdAt =
+        LocalDateTime.ofInstant(Instant.ofEpochMilli(createdAtMillis), ZoneId.systemDefault());
+
+    Long warrantyAtMillis = orders.getCreatedAt() + 15811200000L;
+    LocalDateTime warranty =
+        LocalDateTime.ofInstant(Instant.ofEpochMilli(warrantyAtMillis), ZoneId.systemDefault());
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    String formattedDate = createdAt.format(formatter);
+    String warrantyTo = warranty.format(formatter);
+
+    OrderDetailDTO orderDetailDTO =
+        OrderDetailDTO.builder()
+            .orderCode(orders.getOrderCode())
+            .customerName(orders.getCustomer().getName())
+            .customerPhone(orders.getCustomer().getPhone())
+            .customerAddress(orders.getCustomer().getAddress())
+            .discount(orders.getDiscount())
+            .totalAmount(orders.getTotalAmount())
+            .paymentMethod(orders.getPaymentMethod())
+            .list(orderDetailProductDTOS)
+            .createAt(formattedDate)
+            .warrantyTo(warrantyTo)
+            .build();
+
+    String html = null;
+    Context context = dataMapperService.setData(orderDetailDTO);
+    html = springTemplateEngine.process("OrderBill.html", context);
+    byte[] pdfFile = documentService.htmlToPdf(html);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_PDF);
+
+    String filename = orderCode + ".pdf";
+    headers.setContentDispositionFormData(filename, filename);
+    headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+    return new ResponseEntity<>(pdfFile, headers, HttpStatus.OK);
   }
 
   @Override
@@ -193,6 +264,7 @@ public class OrderFacadeImpl implements OrderFacade {
             .paymentMethod(order.getPaymentMethod())
             .dateSell(order.getCreatedAt())
             .list(orderDetailResponses)
+            .discount(order.getDiscount())
             .build(),
         true);
   }

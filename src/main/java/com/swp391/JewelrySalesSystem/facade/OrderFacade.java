@@ -7,6 +7,7 @@ import com.swp391.JewelrySalesSystem.response.OrderDetailResponse;
 import com.swp391.JewelrySalesSystem.response.OrderHistoryResponse;
 import com.swp391.JewelrySalesSystem.response.OrderResponse;
 import java.util.List;
+import org.springframework.http.ResponseEntity;
 
 public interface OrderFacade {
   BaseResponse<Void> orderProduct(UpsertOrderRequest request);
@@ -22,4 +23,6 @@ public interface OrderFacade {
   BaseResponse<List<OrderHistoryResponse>> getAllHistoryOrder();
 
   BaseResponse<Void> updateStatusDelivery(String code);
+
+  ResponseEntity<byte[]> generateDocument(String orderCode);
 }

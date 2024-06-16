@@ -78,7 +78,7 @@ public class UserController {
       summary = "Update role by Admin")
   @SecurityRequirement(name = "Bearer Authentication")
   public BaseResponse<String> updateAvatar(
-      @RequestParam("id") Long id, @RequestPart MultipartFile file) {
+      @PathVariable("id") Long id, @RequestPart MultipartFile file) {
     return this.userFacade.updateAvatar(id, file);
   }
 
@@ -100,7 +100,7 @@ public class UserController {
       summary = "Delete staff by Id")
   @SecurityRequirement(name = "Bearer Authentication")
   @PreAuthorize("hasRole('ROLE_MANAGER') && hasRole('ROLE_ADMIN')")
-  public BaseResponse<Void> deleteStaff(@RequestParam("id") Long id) {
+  public BaseResponse<Void> deleteStaff(@PathVariable("id") Long id) {
     return this.userFacade.deactivateStaff(id);
   }
 

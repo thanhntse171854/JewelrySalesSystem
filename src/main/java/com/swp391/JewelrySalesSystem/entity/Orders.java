@@ -41,14 +41,19 @@ public class Orders extends BaseEntity implements Serializable {
   @Enumerated(EnumType.STRING)
   private DeliveryStatus deliveryStatus;
 
+  @Column(name = "discount")
+  @Builder.Default
+  private Float discount = 0F;
+
   @Column(name = "payment_method", nullable = false, length = 50)
   @Enumerated(EnumType.STRING)
   private PaymentMethod paymentMethod;
 
-  public void updateInfor(Customer customer, User user, Float totalAmount) {
+  public void updateInfor(Customer customer, User user, Float totalAmount, Float discount) {
     this.customer = customer;
     this.user = user;
     this.totalAmount = totalAmount;
+    this.discount = discount;
   }
 
   public void updateDelivery(DeliveryStatus deliveryStatus) {

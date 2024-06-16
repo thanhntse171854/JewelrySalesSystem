@@ -55,7 +55,8 @@ public enum Size {
   SIZE_52(52),
   SIZE_53(53),
   SIZE_54(54),
-  SIZE_55(55);
+  SIZE_55(55),
+  NONE(0);
 
   private final int value;
 
