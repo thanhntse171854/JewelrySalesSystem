@@ -8,6 +8,7 @@ import com.swp391.JewelrySalesSystem.response.BaseResponse;
 import com.swp391.JewelrySalesSystem.response.GemPriceResponse;
 import com.swp391.JewelrySalesSystem.response.OrderHistoryResponse;
 import java.util.List;
+import org.springframework.http.ResponseEntity;
 
 public interface PurchaseFacade {
   BaseResponse<OrderHistoryResponse> validateOrder(ValidateOrderRequest request);
@@ -17,4 +18,6 @@ public interface PurchaseFacade {
   BaseResponse<List<GemPriceResponse>> getGemByFilter(GemFilterRequest request);
 
   BaseResponse<Void> payment(PaymentRequest request);
+
+  ResponseEntity<byte[]> generateDocument(String orderCode);
 }
