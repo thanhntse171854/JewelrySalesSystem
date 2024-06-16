@@ -20,4 +20,5 @@ public class OrderDetailResponse {
   private DeliveryStatus deliveryStatus;
   private List<ProductOrderDetailResponse> list;
   private Float totalPrice;
+  private Float discount;
 }

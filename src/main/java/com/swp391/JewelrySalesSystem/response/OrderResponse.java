@@ -17,4 +17,5 @@ public class OrderResponse {
   private DeliveryStatus deliveryStatus;
   private PaymentMethod paymentMethod;
   private Float totalPrice;
+  private Float discount;
 }

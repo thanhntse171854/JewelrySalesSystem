@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,17 @@ public class OrderController {
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<Void> order(@RequestBody UpsertOrderRequest request) {
     return this.orderFacade.orderProduct(request);
+  }
+
+  @PostMapping("/export-pdf/{code}")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Generate PDF",
+      tags = {"Sell Order APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<byte[]> generatePDF(@PathVariable("code") String code) {
+    return this.orderFacade.generateDocument(code);
   }
 
   @PutMapping("/order/update")

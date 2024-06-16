@@ -14,4 +14,5 @@ public class UpsertOrderRequest {
   private String name;
   private List<ProductOrderRequest> orderList;
   private Float totalPrice;
+  private Float discount;
 }
