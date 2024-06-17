@@ -9,6 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 public class UpdateProfileRequest {
+  private Long id;
   private String email;
   private String phone;
   private String name;

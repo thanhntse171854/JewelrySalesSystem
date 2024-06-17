@@ -46,6 +46,18 @@ public class PurchaseController {
     return this.purchaseFacade.createPurchase(request);
   }
 
+  @GetMapping("/{code}")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Get purchase order detail",
+      tags = {"Purchase Order APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("isAuthenticated()")
+  public BaseResponse<PurchaseOrderDetailResponse> getPurchaseDetail(
+      @PathVariable("code") String code) {
+    return this.purchaseFacade.getDetailPurchase(code);
+  }
+
   @PostMapping("/payment")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
@@ -91,5 +103,27 @@ public class PurchaseController {
   @PreAuthorize("isAuthenticated()")
   public ResponseEntity<byte[]> generatePDF(@PathVariable("code") String code) {
     return this.purchaseFacade.generateDocument(code);
+  }
+
+  @GetMapping("/all")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Get All Purchase Order",
+      tags = {"Purchase Order APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("isAuthenticated()")
+  public BaseResponse<List<PurchaseOrderResponse>> getAllPurchaseOrder() {
+    return this.purchaseFacade.getAllPurchaseOrder();
+  }
+
+  @DeleteMapping("/order/{code}")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Delete purchase order by seller or cashier",
+      tags = {"Purchase Order APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("isAuthenticated()")
+  public BaseResponse<Void> deletePreOrderByKey(@PathVariable("code") String code) {
+    return this.purchaseFacade.deleteOderByKey(code);
   }
 }

@@ -14,6 +14,8 @@ public class PurchaseOrderRequest {
   private String purchaseOrderCode;
   private Long staffId;
   private String customerName;
+  private String address;
+  private Long birthday;
   private String phone;
   private boolean isProductStore;
   private List<PurchaseOrderDetailRequest> list;

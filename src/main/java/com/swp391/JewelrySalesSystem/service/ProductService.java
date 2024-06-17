@@ -11,9 +11,9 @@ public interface ProductService {
 
   Product findByProductCode(String code);
 
-  Product findById(Long id);
-
   void deactivateProduct(Long productId);
+
+  Product findById(Long id);
 
   void save(Product product);
 }

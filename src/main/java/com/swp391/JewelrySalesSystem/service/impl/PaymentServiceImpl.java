@@ -22,4 +22,9 @@ public class PaymentServiceImpl implements PaymentService {
   public Payment findByOrderId(Long id) {
     return paymentRepository.findByOrderId(id).orElse(null);
   }
+
+  @Override
+  public Payment findByPurchaseId(Long id) {
+    return paymentRepository.findByPurchaseOrderId(id).orElse(null);
+  }
 }

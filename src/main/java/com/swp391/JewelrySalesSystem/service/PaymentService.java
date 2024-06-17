@@ -6,4 +6,6 @@ public interface PaymentService {
   void savePayment(Payment payment);
 
   Payment findByOrderId(Long id);
+
+  Payment findByPurchaseId(Long id);
 }

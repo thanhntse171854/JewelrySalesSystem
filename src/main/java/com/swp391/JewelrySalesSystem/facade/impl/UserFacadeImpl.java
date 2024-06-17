@@ -53,11 +53,13 @@ public class UserFacadeImpl implements UserFacade {
   }
 
   @Override
-  public BaseResponse<UserProfileResponse> getProfile() {
-    var principal =
-        (SecurityAccountDetails)
-            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    User user = userService.findByPhone(principal.getPhone());
+  public BaseResponse<UserProfileResponse> getProfile(Long id) {
+    //    var principal =
+    //        (SecurityAccountDetails)
+    //            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    //    User user = userService.findByPhone(principal.getPhone());
+
+    User user = userService.findById(id);
 
     return BaseResponse.build(
         UserProfileResponse.builder()
@@ -108,10 +110,12 @@ public class UserFacadeImpl implements UserFacade {
 
   @Override
   public BaseResponse<UserProfileResponse> updateProfileByStaff(UpdateProfileRequest request) {
-    var principal =
-        (SecurityAccountDetails)
-            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    User user = userService.findByPhone(principal.getPhone());
+    //    var principal =
+    //        (SecurityAccountDetails)
+    //            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    //    User user = userService.findByPhone(principal.getPhone());
+
+    User user = userService.findById(request.getId());
     if (request.getEmail() != null) {
       user.setEmail(request.getEmail());
     }

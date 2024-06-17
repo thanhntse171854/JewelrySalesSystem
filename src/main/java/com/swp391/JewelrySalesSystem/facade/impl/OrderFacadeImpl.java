@@ -108,6 +108,7 @@ public class OrderFacadeImpl implements OrderFacade {
       customer.updateTotalAmountPurchase(totalAmount);
 
       orders.updatePaymentMethod(request.getPaymentMethod());
+      orders.updateAmount(request.getAmount());
       orderService.save(orders);
     }
 
@@ -265,6 +266,7 @@ public class OrderFacadeImpl implements OrderFacade {
             .dateSell(order.getCreatedAt())
             .list(orderDetailResponses)
             .discount(order.getDiscount())
+            .totalPrice(order.getTotalAmount())
             .build(),
         true);
   }
