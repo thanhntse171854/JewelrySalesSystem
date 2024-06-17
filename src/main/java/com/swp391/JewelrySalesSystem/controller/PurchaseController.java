@@ -12,6 +12,7 @@ import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,5 +80,16 @@ public class PurchaseController {
             .origin(origin)
             .build();
     return this.purchaseFacade.getGemByFilter(request);
+  }
+
+  @PostMapping("/export-pdf/{code}")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Generate PDF",
+      tags = {"Purchase Order APIs"})
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<byte[]> generatePDF(@PathVariable("code") String code) {
+    return this.purchaseFacade.generateDocument(code);
   }
 }

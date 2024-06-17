@@ -3,6 +3,7 @@ package com.swp391.JewelrySalesSystem.service.impl;
 import com.swp391.JewelrySalesSystem.entity.Product;
 import com.swp391.JewelrySalesSystem.enums.ErrorCode;
 import com.swp391.JewelrySalesSystem.exception.EntityNotFoundException;
+import com.swp391.JewelrySalesSystem.exception.ProductException;
 import com.swp391.JewelrySalesSystem.repository.ProductRepository;
 import com.swp391.JewelrySalesSystem.request.ProductCriteria;
 import com.swp391.JewelrySalesSystem.service.ProductService;
@@ -56,6 +57,13 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public Product findByProductCode(String code) {
     return productRepository.findByProductCode(code);
+  }
+
+  @Override
+  public Product findById(Long id) {
+    return productRepository
+        .findById(id)
+        .orElseThrow(() -> new ProductException(ErrorCode.PRODUCT_NOT_FOUND_OR_DELETED));
   }
 
   @Override

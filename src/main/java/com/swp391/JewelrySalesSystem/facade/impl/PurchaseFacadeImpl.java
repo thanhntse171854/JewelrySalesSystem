@@ -1,5 +1,7 @@
 package com.swp391.JewelrySalesSystem.facade.impl;
 
+import com.swp391.JewelrySalesSystem.dto.PurchaseOrderDTO;
+import com.swp391.JewelrySalesSystem.dto.PurchaseOrderDetailDTO;
 import com.swp391.JewelrySalesSystem.entity.*;
 import com.swp391.JewelrySalesSystem.enums.ErrorCode;
 import com.swp391.JewelrySalesSystem.enums.PayemntType;
@@ -16,11 +18,21 @@ import com.swp391.JewelrySalesSystem.response.BaseResponse;
 import com.swp391.JewelrySalesSystem.response.GemPriceResponse;
 import com.swp391.JewelrySalesSystem.response.OrderHistoryResponse;
 import com.swp391.JewelrySalesSystem.service.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +45,9 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
   private final PriceService priceService;
   private final CustomerService customerService;
   private final PaymentService paymentService;
+  private final SpringTemplateEngine springTemplateEngine;
+  private final DataMapperService dataMapperService;
+  private final DocumentService documentService;
 
   @Override
   public BaseResponse<OrderHistoryResponse> validateOrder(ValidateOrderRequest request) {
@@ -174,6 +189,70 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
       }
       throw new PaymentException(ErrorCode.PAYMENT_FAIL);
     }
+  }
+
+  @Override
+  public ResponseEntity<byte[]> generateDocument(String orderCode) {
+    PurchaseOrder purchaseOrder = purchaseService.findByPurchaseOrderCode(orderCode);
+    if (purchaseOrder == null) {
+      throw new OrderExcetpion(ErrorCode.ORDER_NOT_FOUND);
+    }
+    List<PurchaseOrderDetailDTO> list = new ArrayList<>();
+    for (var puchase : purchaseOrder.getList()) {
+      if (puchase.getProductId() == null) {
+        list.add(
+            PurchaseOrderDetailDTO.builder()
+                .productName(puchase.getName())
+                .material(puchase.getMaterial().getName())
+                .origin(puchase.getOrigin())
+                .color(puchase.getColor())
+                .clarity(puchase.getClarity())
+                .carat(puchase.getCarat())
+                .weight(puchase.getWeight())
+                .price(puchase.getPrice())
+                .size("NONE")
+                .build());
+      } else {
+        Product product = productService.findById(puchase.getProductId());
+        list.add(
+            PurchaseOrderDetailDTO.builder()
+                .productName(product.getProductName())
+                .productCode(product.getProductCode())
+                .size(product.getSize().toString())
+                .build());
+      }
+    }
+
+    Long createdAtMillis = purchaseOrder.getCreatedAt();
+    LocalDateTime createdAt =
+        LocalDateTime.ofInstant(Instant.ofEpochMilli(createdAtMillis), ZoneId.systemDefault());
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    String formattedDate = createdAt.format(formatter);
+
+    PurchaseOrderDTO purchaseOrderDTO =
+        PurchaseOrderDTO.builder()
+            .orderCode(purchaseOrder.getPurchaseOrderCode())
+            .customerName(purchaseOrder.getCustomer().getName())
+            .customerPhone(purchaseOrder.getCustomer().getPhone())
+            .customerAddress(purchaseOrder.getCustomer().getAddress())
+            .totalPrice(purchaseOrder.getTotalPrice())
+            .paymentMethod(purchaseOrder.getPaymentMethod())
+            .list(list)
+            .createAt(formattedDate)
+            .build();
+
+    String html = null;
+    Context context = dataMapperService.setData(purchaseOrderDTO);
+    html = springTemplateEngine.process("PurchaseOrder.html", context);
+    byte[] pdfFile = documentService.htmlToPdf(html);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_PDF);
+
+    String filename = orderCode + ".pdf";
+    headers.setContentDispositionFormData(filename, filename);
+    headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+    return new ResponseEntity<>(pdfFile, headers, HttpStatus.OK);
   }
 
   private String generatePaymentCode() {
