@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface UserFacade {
   BaseResponse<LoginResponse> login(LoginRequest request);
 
-  BaseResponse<UserProfileResponse> getProfile();
+  BaseResponse<UserProfileResponse> getProfile(Long id);
 
   BaseResponse<UserProfileResponse> getProfileDetail(Long id);
 

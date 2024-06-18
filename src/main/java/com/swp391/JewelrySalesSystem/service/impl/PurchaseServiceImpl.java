@@ -3,6 +3,7 @@ package com.swp391.JewelrySalesSystem.service.impl;
 import com.swp391.JewelrySalesSystem.entity.PurchaseOrder;
 import com.swp391.JewelrySalesSystem.repository.PurchaseRepository;
 import com.swp391.JewelrySalesSystem.service.PurchaseService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,17 @@ public class PurchaseServiceImpl implements PurchaseService {
   }
 
   @Override
+  public List<PurchaseOrder> findAll() {
+    return purchaseRepository.findAll();
+  }
+
+  @Override
   public void save(PurchaseOrder purchaseOrder) {
     purchaseRepository.save(purchaseOrder);
+  }
+
+  @Override
+  public void deleteById(Long id) {
+    purchaseRepository.deleteById(id);
   }
 }

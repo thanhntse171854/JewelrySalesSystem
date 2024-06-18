@@ -14,9 +14,7 @@ import com.swp391.JewelrySalesSystem.request.GemFilterRequest;
 import com.swp391.JewelrySalesSystem.request.PaymentRequest;
 import com.swp391.JewelrySalesSystem.request.PurchaseOrderRequest;
 import com.swp391.JewelrySalesSystem.request.ValidateOrderRequest;
-import com.swp391.JewelrySalesSystem.response.BaseResponse;
-import com.swp391.JewelrySalesSystem.response.GemPriceResponse;
-import com.swp391.JewelrySalesSystem.response.OrderHistoryResponse;
+import com.swp391.JewelrySalesSystem.response.*;
 import com.swp391.JewelrySalesSystem.service.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -76,7 +74,12 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
     Customer customer = customerService.findByPhone(request.getPhone());
     if (customer == null) {
       customer =
-          Customer.builder().name(request.getCustomerName()).phone(request.getPhone()).build();
+          Customer.builder()
+              .name(request.getCustomerName())
+              .phone(request.getPhone())
+              .address(request.getAddress())
+              .dateOfBirth(request.getBirthday())
+              .build();
       customerService.save(customer);
     }
 
@@ -203,7 +206,7 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
         list.add(
             PurchaseOrderDetailDTO.builder()
                 .productName(puchase.getName())
-                .material(puchase.getMaterial().getName())
+                .material(puchase.getMaterial() != null ? puchase.getMaterial().getName() : null)
                 .origin(puchase.getOrigin())
                 .color(puchase.getColor())
                 .clarity(puchase.getClarity())
@@ -253,6 +256,53 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
     headers.setContentDispositionFormData(filename, filename);
     headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
     return new ResponseEntity<>(pdfFile, headers, HttpStatus.OK);
+  }
+
+  @Override
+  public BaseResponse<List<PurchaseOrderResponse>> getAllPurchaseOrder() {
+    List<PurchaseOrder> list = purchaseService.findAll();
+    List<PurchaseOrderResponse> purchaseOrderResponses = new ArrayList<>();
+    for (var purchase : list) {
+      purchaseOrderResponses.add(
+          PurchaseOrderResponse.builder()
+              .orderId(purchase.getId())
+              .customerPhone(purchase.getCustomer().getPhone())
+              .dateOrder(purchase.getCreatedAt())
+              .customerName(purchase.getCustomer().getName())
+              .salesStaffName(purchase.getUser().getName())
+              .totalPrice(purchase.getTotalPrice())
+              .orderCode(purchase.getPurchaseOrderCode())
+              .build());
+    }
+    return BaseResponse.build(purchaseOrderResponses, true);
+  }
+
+  @Override
+  public BaseResponse<Void> deleteOderByKey(String code) {
+    PurchaseOrder purchaseOrder = purchaseService.findByPurchaseOrderCode(code);
+    Payment payment = paymentService.findByPurchaseId(purchaseOrder.getId());
+    if (purchaseOrder != null && payment != null && payment.getStatus().isSuccess()) {
+      throw new OrderExcetpion(ErrorCode.ORDER_DELETE_FAIL);
+    }
+    purchaseService.deleteById(purchaseOrder.getId());
+    return BaseResponse.ok();
+  }
+
+  @Override
+  public BaseResponse<PurchaseOrderDetailResponse> getDetailPurchase(String code) {
+    PurchaseOrder purchaseOrder = purchaseService.findByPurchaseOrderCode(code);
+    if (purchaseOrder == null) throw new OrderExcetpion(ErrorCode.ORDER_NOT_FOUND);
+    return BaseResponse.build(
+        PurchaseOrderDetailResponse.builder()
+            .orderId(purchaseOrder.getId())
+            .customerAddress(purchaseOrder.getCustomer().getName())
+            .customerPhone(purchaseOrder.getCustomer().getPhone())
+            .customerName(purchaseOrder.getCustomer().getName())
+            .birthday(purchaseOrder.getCustomer().getDateOfBirth())
+            .orderCode(purchaseOrder.getPurchaseOrderCode())
+            .totalAmount(purchaseOrder.getTotalPrice())
+            .build(),
+        true);
   }
 
   private String generatePaymentCode() {

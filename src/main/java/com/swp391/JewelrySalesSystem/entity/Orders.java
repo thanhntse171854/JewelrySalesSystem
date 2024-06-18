@@ -67,4 +67,8 @@ public class Orders extends BaseEntity implements Serializable {
   public void updatePaymentMethod(PaymentMethod paymentMethod) {
     this.paymentMethod = paymentMethod;
   }
+
+  public void updateAmount(Float totalAmount) {
+    this.totalAmount = totalAmount;
+  }
 }

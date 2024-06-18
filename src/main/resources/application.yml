@@ -7,15 +7,16 @@ rabbitmq:
 
 
 spring:
-#  thymeleaf:
-#    prefix: classpath:/templates/
-#    suffix: html
-#    cache: false
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    url: jdbc:postgresql://localhost:5432/JewelrySalesSystem
+#    username: jewelrysales
+#    password: 123456
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/JewelrySalesSystem
-    username: jewelrysales
-    password: 123456
+    url: jdbc:postgresql://monorail.proxy.rlwy.net:51387/railway
+    username: postgres
+    password: ypAdKgqozCuZEtpVxwgUwMKkDBlelkKX
   jpa:
     hibernate:
       ddl-auto: none

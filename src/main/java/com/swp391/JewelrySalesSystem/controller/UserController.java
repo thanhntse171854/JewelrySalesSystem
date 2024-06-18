@@ -48,18 +48,18 @@ public class UserController {
     return BaseResponse.ok();
   }
 
-  @GetMapping("/profile")
+  @GetMapping("/profile/{id}")
   @ResponseStatus(HttpStatus.OK)
   @SecurityRequirement(name = "Bearer Authentication")
   @Operation(
       tags = {"USER APIs"},
       summary = "Get profile of Staff")
   @PreAuthorize("isAuthenticated()")
-  public BaseResponse<UserProfileResponse> getProfile() {
-    return this.userFacade.getProfile();
+  public BaseResponse<UserProfileResponse> getProfile(@PathVariable("id") Long id) {
+    return this.userFacade.getProfile(id);
   }
 
-  @PostMapping("/update")
+  @PostMapping("/update/{id}")
   @ResponseStatus(HttpStatus.OK)
   @SecurityRequirement(name = "Bearer Authentication")
   @Operation(
