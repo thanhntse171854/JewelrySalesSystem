@@ -1,18 +1,17 @@
 package com.swp391.JewelrySalesSystem.facade;
 
+import com.swp391.JewelrySalesSystem.request.OrderCriteria;
 import com.swp391.JewelrySalesSystem.request.PaymentRequest;
 import com.swp391.JewelrySalesSystem.request.UpsertOrderRequest;
-import com.swp391.JewelrySalesSystem.response.BaseResponse;
-import com.swp391.JewelrySalesSystem.response.OrderDetailResponse;
-import com.swp391.JewelrySalesSystem.response.OrderHistoryResponse;
-import com.swp391.JewelrySalesSystem.response.OrderResponse;
+import com.swp391.JewelrySalesSystem.response.*;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 public interface OrderFacade {
   BaseResponse<Void> orderProduct(UpsertOrderRequest request);
 
-  BaseResponse<List<OrderResponse>> getOrderProductBySeller(Long staffId);
+  BaseResponse<PaginationResponse<List<OrderResponse>>> getOrderProductBySeller(
+      OrderCriteria orderCriteria);
 
   BaseResponse<Void> deleteOderByKey(String code);
 

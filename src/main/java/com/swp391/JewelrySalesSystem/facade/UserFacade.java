@@ -1,5 +1,6 @@
 package com.swp391.JewelrySalesSystem.facade;
 
+import com.swp391.JewelrySalesSystem.request.ChangePasswordRequest;
 import com.swp391.JewelrySalesSystem.request.LoginRequest;
 import com.swp391.JewelrySalesSystem.request.UpdateProfileRequest;
 import com.swp391.JewelrySalesSystem.request.UpdateRoleRequest;
@@ -26,6 +27,8 @@ public interface UserFacade {
   BaseResponse<Void> deactivateStaff(Long id);
 
   BaseResponse<String> updateAvatar(Long id, MultipartFile file);
+
+  void changePassword(ChangePasswordRequest request);
 
   void logout();
 }

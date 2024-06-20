@@ -21,7 +21,13 @@ public enum ErrorCode {
   ORDER_DELETE_FAIL("1012", "The order has been paid and delivered"),
   ORDER_ASSIGNED("1013", "The order has been delivered"),
   UPLOAD_FAIL("1014", "Failed to upload image"),
-  ROLE_NOT_FOUND("1015", "Role not found");
+  ROLE_NOT_FOUND("1015", "Role not found"),
+  CURRENT_PASSWORD_DOES_NOT_MATCH("1016", "Current password is invalid"),
+  INVALID_CONFIRM_NEW_PASSWORD("1017", "New password and confirm new password does not match"),
+  OLD_PASSWORD_EQUALS_NEW_PASSWORD(
+      "1018", "Please choose a new password different from the old one"),
+  PASSWORD_AND_NEW_PASSWORD_IS_NOT_EXIST("1019", "Please enter password and confirm password"),
+  GEM_NOT_FOUND("1020", "Gem not found!");
 
   private final String code;
   private final String message;

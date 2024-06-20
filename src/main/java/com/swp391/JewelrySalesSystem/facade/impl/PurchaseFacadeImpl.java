@@ -127,7 +127,9 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
     List<Gem> gems = priceService.filterGemPriceLists(request);
     List<GemPriceList> gemPriceList = new ArrayList<>();
     for (var gem : gems) {
-      gemPriceList.add(priceService.findGemPriceList(gem));
+      if (priceService.findGemPriceList(gem) != null) {
+        gemPriceList.add(priceService.findGemPriceList(gem));
+      }
     }
     List<GemPriceResponse> gemPriceResponseList =
         gemPriceList.stream()
@@ -295,7 +297,7 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
     return BaseResponse.build(
         PurchaseOrderDetailResponse.builder()
             .orderId(purchaseOrder.getId())
-            .customerAddress(purchaseOrder.getCustomer().getName())
+            .customerAddress(purchaseOrder.getCustomer().getAddress())
             .customerPhone(purchaseOrder.getCustomer().getPhone())
             .customerName(purchaseOrder.getCustomer().getName())
             .birthday(purchaseOrder.getCustomer().getDateOfBirth())

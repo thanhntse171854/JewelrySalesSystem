@@ -63,4 +63,8 @@ public class User extends BaseEntity implements Serializable {
   public void updateRole(List<Role> role) {
     this.roles = role;
   }
+
+  public void changePassword(String password) {
+    this.password = password;
+  }
 }

@@ -22,4 +22,5 @@ public class UserProfileResponse {
   private String avatar;
   private String address;
   private List<RoleUser> roleUser;
+  private boolean isActive;
 }

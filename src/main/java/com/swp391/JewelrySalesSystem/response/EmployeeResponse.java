@@ -16,4 +16,5 @@ public class EmployeeResponse {
   private String name;
   private String phone;
   private List<RoleUser> roles;
+  private boolean isActive;
 }

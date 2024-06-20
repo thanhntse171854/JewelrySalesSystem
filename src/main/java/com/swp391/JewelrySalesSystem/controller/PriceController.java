@@ -5,11 +5,9 @@ import com.swp391.JewelrySalesSystem.response.BaseResponse;
 import com.swp391.JewelrySalesSystem.response.GemPriceResponse;
 import com.swp391.JewelrySalesSystem.response.MaterialPriceResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -26,8 +24,8 @@ public class PriceController {
   @Operation(
       summary = "Get all price by material",
       tags = {"Price APIs"})
-  @SecurityRequirement(name = "Bearer Authentication")
-  @PreAuthorize("isAuthenticated()")
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("isAuthenticated()")
   public BaseResponse<List<MaterialPriceResponse>> getMaterialPrice() {
     return this.priceFacade.getMaterialPrice();
   }
@@ -37,8 +35,8 @@ public class PriceController {
   @Operation(
       summary = "Get all price by gems",
       tags = {"Price APIs"})
-  @SecurityRequirement(name = "Bearer Authentication")
-  @PreAuthorize("isAuthenticated()")
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("isAuthenticated()")
   public BaseResponse<List<GemPriceResponse>> getGemPrice() {
     return this.priceFacade.getGemPrice();
   }
