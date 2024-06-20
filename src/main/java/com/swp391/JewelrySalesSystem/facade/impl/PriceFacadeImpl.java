@@ -47,18 +47,30 @@ public class PriceFacadeImpl implements PriceFacade {
     List<Gem> gems = gemService.getAllGem();
     for (Gem gem : gems) {
       GemPriceList gemPriceList = priceService.findGemPriceList(gem);
-      list.add(
-          GemPriceResponse.builder()
-              .gemId(gem.getId())
-              .origin(gemPriceList.getOrigin())
-              .color(gemPriceList.getColor())
-              .cut(gemPriceList.getCut())
-              .clarity(gemPriceList.getClarity())
-              .carat(gemPriceList.getCarat())
-              .gemBuyPrice(gemPriceList.getBuyPrice())
-              .gemSellPrice(gemPriceList.getSellPrice())
-              .effectDate(gemPriceList.getEffectDate())
-              .build());
+      if (gemPriceList != null) {
+        list.add(
+            GemPriceResponse.builder()
+                .gemId(gem.getId())
+                .origin(gemPriceList.getOrigin())
+                .color(gemPriceList.getColor())
+                .cut(gemPriceList.getCut())
+                .clarity(gemPriceList.getClarity())
+                .carat(gemPriceList.getCarat())
+                .gemBuyPrice(gemPriceList.getBuyPrice())
+                .gemSellPrice(gemPriceList.getSellPrice())
+                .effectDate(gemPriceList.getEffectDate())
+                .build());
+      } else {
+        list.add(
+            GemPriceResponse.builder()
+                .gemId(gem.getId())
+                .origin(gem.getOrigin())
+                .color(gem.getColor())
+                .cut(gem.getCut())
+                .clarity(gem.getClarity())
+                .carat(gem.getCarat())
+                .build());
+      }
     }
     return BaseResponse.build(list, true);
   }

@@ -36,5 +36,39 @@ public class Gem extends BaseEntity implements Serializable {
   private Float carat;
 
   @Column(name = "is_jewelry")
-  private boolean isDiamondJewelry;
+  @Builder.Default
+  private boolean isDiamondJewelry = true;
+
+  public void updateBasicInfo(
+      String name,
+      String code,
+      String cut,
+      String color,
+      Float carat,
+      boolean isDiamondJewelry,
+      String origin,
+      String clarity) {
+    if (name != null) {
+      this.gemName = name;
+    }
+    if (code != null) {
+      this.gemCode = code;
+    }
+    if (cut != null) {
+      this.cut = cut;
+    }
+    if (color != null) {
+      this.color = color;
+    }
+    if (carat != null) {
+      this.carat = carat;
+    }
+    this.isDiamondJewelry = isDiamondJewelry;
+    if (origin != null) {
+      this.origin = origin;
+    }
+    if (clarity != null) {
+      this.clarity = clarity;
+    }
+  }
 }

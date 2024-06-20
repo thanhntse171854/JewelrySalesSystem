@@ -4,8 +4,10 @@ import com.swp391.JewelrySalesSystem.entity.Role;
 import com.swp391.JewelrySalesSystem.entity.User;
 import com.swp391.JewelrySalesSystem.enums.ErrorCode;
 import com.swp391.JewelrySalesSystem.enums.RoleUser;
+import com.swp391.JewelrySalesSystem.exception.ChangePasswordException;
 import com.swp391.JewelrySalesSystem.exception.LoginException;
 import com.swp391.JewelrySalesSystem.facade.UserFacade;
+import com.swp391.JewelrySalesSystem.request.ChangePasswordRequest;
 import com.swp391.JewelrySalesSystem.request.LoginRequest;
 import com.swp391.JewelrySalesSystem.request.UpdateProfileRequest;
 import com.swp391.JewelrySalesSystem.request.UpdateRoleRequest;
@@ -23,7 +25,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
@@ -35,6 +39,7 @@ public class UserFacadeImpl implements UserFacade {
   private final AuthenticationManager authenticationManager;
   private final CloudinaryService cloudinaryService;
   private final RoleService roleService;
+  private final PasswordEncoder passwordEncoder;
 
   @Override
   public BaseResponse<LoginResponse> login(LoginRequest loginRequest) {
@@ -72,6 +77,7 @@ public class UserFacadeImpl implements UserFacade {
             .address(user.getAddress())
             .birthday(user.getDateOfBirth())
             .roleUser(getRole(user))
+            .isActive(user.isActive())
             .build(),
         true);
   }
@@ -116,6 +122,9 @@ public class UserFacadeImpl implements UserFacade {
     //    User user = userService.findByPhone(principal.getPhone());
 
     User user = userService.findById(request.getId());
+    if (request.getName() != null) {
+      user.setName(request.getName());
+    }
     if (request.getEmail() != null) {
       user.setEmail(request.getEmail());
     }
@@ -145,6 +154,7 @@ public class UserFacadeImpl implements UserFacade {
             .address(user.getAddress())
             .birthday(user.getDateOfBirth())
             .roleUser(getRole(user))
+            .isActive(user.isActive())
             .build(),
         true);
   }
@@ -168,6 +178,7 @@ public class UserFacadeImpl implements UserFacade {
               .name(employee.getName())
               .phone(employee.getPhone())
               .roles(getRole(employee))
+              .isActive(employee.isActive())
               .build());
     }
     return BaseResponse.build(employeeResponses, true);
@@ -188,6 +199,29 @@ public class UserFacadeImpl implements UserFacade {
     user.setAvatar(avatar);
     userService.save(user);
     return BaseResponse.build(avatar, true);
+  }
+
+  @Override
+  @Transactional
+  public void changePassword(ChangePasswordRequest request) {
+    User user = userService.findById(request.getId());
+
+    boolean isValidCurrentPassword =
+        passwordEncoder.matches(request.getOldPassword(), user.getPassword());
+    if (!isValidCurrentPassword)
+      throw new ChangePasswordException(ErrorCode.CURRENT_PASSWORD_DOES_NOT_MATCH);
+
+    boolean isValidConfirmPassword =
+        request.getNewPassword().equals(request.getConfirmNewPassword());
+    if (!isValidConfirmPassword)
+      throw new ChangePasswordException(ErrorCode.INVALID_CONFIRM_NEW_PASSWORD);
+
+    boolean isPasswordDifferent = request.getOldPassword().equals(request.getNewPassword());
+    if (isPasswordDifferent)
+      throw new ChangePasswordException(ErrorCode.OLD_PASSWORD_EQUALS_NEW_PASSWORD);
+
+    user.changePassword(passwordEncoder.encode(request.getNewPassword()));
+    userService.save(user);
   }
 
   private LoginResponse buildLoginResponse(

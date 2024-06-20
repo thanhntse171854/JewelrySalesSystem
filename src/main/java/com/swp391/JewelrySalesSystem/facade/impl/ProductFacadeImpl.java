@@ -7,8 +7,8 @@ import com.swp391.JewelrySalesSystem.enums.CategoryType;
 import com.swp391.JewelrySalesSystem.enums.ErrorCode;
 import com.swp391.JewelrySalesSystem.exception.ProductException;
 import com.swp391.JewelrySalesSystem.facade.ProductFacade;
-import com.swp391.JewelrySalesSystem.request.CreateProductRequest;
 import com.swp391.JewelrySalesSystem.request.ProductCriteria;
+import com.swp391.JewelrySalesSystem.request.UpsertProductRequest;
 import com.swp391.JewelrySalesSystem.response.*;
 import com.swp391.JewelrySalesSystem.service.*;
 import java.util.ArrayList;
@@ -24,8 +24,10 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProductFacadeImpl implements ProductFacade {
   private final ProductService productService;
   private final PriceService priceService;
+  private final GemService gemService;
   private final ProductCategoryService productCategoryService;
   private final MaterialService materialService;
+  private final ProductGemService productGemService;
   private final CloudinaryService cloudinaryService;
 
   @Override
@@ -129,10 +131,19 @@ public class ProductFacadeImpl implements ProductFacade {
 
   private float calculateTotalPrice(Product product) {
     float materialPrice = calculateMaterialPrice(product);
-    float gemPrice =
-        product.getIsGem()
-            ? (float) getInformationGem(product).stream().mapToDouble(GemDTO::getTotalPrice).sum()
-            : 0;
+    float gemPrice = 0;
+
+    if (product.getIsGem()) {
+      List<GemDTO> gemDTOs = getInformationGem(product);
+
+      for (GemDTO gemDTO : gemDTOs) {
+        if (Float.compare(gemDTO.getTotalPrice(), -1F) == 0) {
+          return -1;
+        }
+        gemPrice += gemDTO.getTotalPrice();
+      }
+    }
+
     float totalPrice =
         materialPrice + gemPrice + (product.getGemCost() == null ? 0 : product.getGemCost());
 
@@ -181,7 +192,9 @@ public class ProductFacadeImpl implements ProductFacade {
   }
 
   private Float getMaxPriceSellForGem(@NotNull Gem gem) {
-    return priceService.findGemPriceList(gem).getSellPrice();
+    GemPriceList gemPriceList = priceService.findGemPriceList(gem);
+    if (gemPriceList == null) return -1F;
+    return gemPriceList.getSellPrice();
   }
 
   private Float getMaxPriceForMaterial(@NotNull Material material) {
@@ -193,7 +206,6 @@ public class ProductFacadeImpl implements ProductFacade {
         .map(
             productGem -> {
               Float price = getMaxPriceSellForGem(productGem.getGem());
-
               return GemDTO.builder()
                   .id(productGem.getGem().getId())
                   .gemName(productGem.getGem().getGemName())
@@ -204,7 +216,10 @@ public class ProductFacadeImpl implements ProductFacade {
                   .origin(productGem.getGem().getOrigin())
                   .priceSell(price)
                   .carat(productGem.getGem().getCarat())
-                  .totalPrice(price + product.getProductionCost())
+                  .totalPrice(
+                      (Float.compare(price, -1F) == 0)
+                          ? -1F
+                          : (price + product.getProductionCost()))
                   .build();
             })
         .toList();
@@ -212,13 +227,17 @@ public class ProductFacadeImpl implements ProductFacade {
 
   @SneakyThrows
   @Override
-  public BaseResponse<Void> createProduct(
-      CreateProductRequest request, List<MultipartFile> images) {
+  public BaseResponse<Void> createProduct(UpsertProductRequest request) {
     if (productService.findByProductCode(request.getProductCode()) != null)
       throw new ProductException(ErrorCode.PRODUCT_IS_EXIST);
 
     ProductCategory productCategory = productCategoryService.findById(request.getCategoryId());
 
+    boolean isCategoryGoldOrJewelryNotDiamond =
+        productCategory.getCategoryType().equals(CategoryType.GOLD)
+            || productCategory.getCategoryType().equals(CategoryType.JEWELRY)
+                && request.getCarat() == null;
+    Gem gem = null;
     Product product =
         Product.builder()
             .productCode(request.getProductCode())
@@ -227,38 +246,65 @@ public class ProductFacadeImpl implements ProductFacade {
             .productionCost(request.getProductionCost())
             .gender(request.getGender())
             .category(productCategory)
-            .isGem(true)
             .size(request.getSize())
             .build();
-
-    if (request.getMaterialProductRequests() != null) {
+    if (isCategoryGoldOrJewelryNotDiamond) {
+      product.updateIsGem(false);
+      List<ProductMaterial> list = new ArrayList<>();
       for (var materialP : request.getMaterialProductRequests()) {
         Material material = materialService.findById(materialP.getMaterial());
-        ProductMaterial productMaterial =
+        list.add(
             ProductMaterial.builder()
                 .product(product)
                 .material(material)
                 .weight(materialP.getWeight())
-                .build();
+                .build());
 
-        product.addProductMaterial(productMaterial);
+        product.addProductMaterial(list);
+        ;
+      }
+    } else {
+      product.updateIsGem(true);
+      gem =
+          gemService.findGem(
+              request.getCarat(),
+              request.getColor(),
+              request.getClarity(),
+              request.getCut(),
+              request.getOrigin());
+      if (gem == null) {
+        gem =
+            Gem.builder()
+                .gemName(request.getDiamondName())
+                .gemCode(request.getGemCode())
+                .cut(request.getCut())
+                .color(request.getColor())
+                .carat(request.getCarat())
+                .isDiamondJewelry(request.isJewelryDiamond())
+                .origin(request.getOrigin())
+                .clarity(request.getClarity())
+                .build();
+        gemService.save(gem);
+      }
+      if (request.getMaterialProductRequests() != null) {
+        List<ProductMaterial> list = new ArrayList<>();
+        for (var materialP : request.getMaterialProductRequests()) {
+          Material material = materialService.findById(materialP.getMaterial());
+          list.add(
+              ProductMaterial.builder()
+                  .product(product)
+                  .material(material)
+                  .weight(materialP.getWeight())
+                  .build());
+
+          product.addProductMaterial(list);
+        }
       }
     }
 
-    for (MultipartFile file : images) {
-      String url = cloudinaryService.uploadImage(file.getBytes());
-
-      ProductAsset productAsset =
-          ProductAsset.builder()
-              .mediaKey(file.getOriginalFilename())
-              .mediaUrl(url)
-              .product(product)
-              .build();
-
-      product.getProductAssets().add(productAsset);
-    }
-
     productService.save(product);
+    if (gem != null)
+      productGemService.saveProductGem(ProductGem.builder().product(product).gem(gem).build());
     return BaseResponse.ok();
   }
 
@@ -269,6 +315,116 @@ public class ProductFacadeImpl implements ProductFacade {
       throw new ProductException(ErrorCode.PRODUCT_NOT_FOUND_OR_DELETED);
     }
     productService.deactivateProduct(product.getId());
+    return BaseResponse.ok();
+  }
+
+  @Override
+  public BaseResponse<ProductDetailResponse> updateProduct(UpsertProductRequest request) {
+    Product product = productService.findByProductCode(request.getProductCode());
+    if (product == null) throw new ProductException(ErrorCode.PRODUCT_NOT_FOUND_OR_DELETED);
+
+    ProductCategory productCategory = productCategoryService.findById(request.getCategoryId());
+
+    boolean isCategoryGoldOrJewelryNotDiamond =
+        productCategory.getCategoryType().equals(CategoryType.GOLD)
+            || productCategory.getCategoryType().equals(CategoryType.JEWELRY)
+                && request.getCarat() == null;
+    Gem gem = null;
+    product.updateBasicInfo(
+        request.getProductName(),
+        request.getGemCost(),
+        request.getProductionCost(),
+        request.getGender(),
+        productCategory,
+        request.getSize());
+    if (isCategoryGoldOrJewelryNotDiamond) {
+      product.updateIsGem(false);
+      List<ProductMaterial> list = new ArrayList<>();
+      for (var materialP : request.getMaterialProductRequests()) {
+        Material material = materialService.findById(materialP.getMaterial());
+        list.add(
+            ProductMaterial.builder()
+                .product(product)
+                .material(material)
+                .weight(materialP.getWeight())
+                .build());
+
+        product.addProductMaterial(list);
+        ;
+      }
+    } else {
+      product.updateIsGem(true);
+      gem = gemService.findById(request.getGemId());
+      gem.updateBasicInfo(
+          request.getDiamondName(),
+          request.getGemCode(),
+          request.getCut(),
+          request.getColor(),
+          request.getCarat(),
+          request.isJewelryDiamond(),
+          request.getOrigin(),
+          request.getClarity());
+      gemService.save(gem);
+    }
+    if (request.getMaterialProductRequests() != null) {
+      List<ProductMaterial> list = new ArrayList<>();
+      for (var materialP : request.getMaterialProductRequests()) {
+        Material material = materialService.findById(materialP.getMaterial());
+        list.add(
+            ProductMaterial.builder()
+                .product(product)
+                .material(material)
+                .weight(materialP.getWeight())
+                .build());
+
+        product.addProductMaterial(list);
+      }
+    }
+    productService.save(product);
+    return BaseResponse.ok();
+  }
+
+  @SneakyThrows
+  @Override
+  public BaseResponse<Void> addImages(
+      Long id,
+      MultipartFile image1,
+      MultipartFile image2,
+      MultipartFile image3,
+      MultipartFile image4) {
+    Product product = productService.findById(id);
+    List<ProductAsset> assetList = new ArrayList<>();
+    if (image1 != null)
+      assetList.add(
+          ProductAsset.builder()
+              .mediaKey(image1.getOriginalFilename())
+              .mediaUrl(cloudinaryService.uploadImage(image1.getBytes()))
+              .product(product)
+              .build());
+
+    if (image2 != null)
+      assetList.add(
+          ProductAsset.builder()
+              .mediaKey(image2.getOriginalFilename())
+              .mediaUrl(cloudinaryService.uploadImage(image2.getBytes()))
+              .product(product)
+              .build());
+    if (image3 != null)
+      assetList.add(
+          ProductAsset.builder()
+              .mediaKey(image3.getOriginalFilename())
+              .mediaUrl(cloudinaryService.uploadImage(image3.getBytes()))
+              .product(product)
+              .build());
+    if (image4 != null)
+      assetList.add(
+          ProductAsset.builder()
+              .mediaKey(image4.getOriginalFilename())
+              .mediaUrl(cloudinaryService.uploadImage(image4.getBytes()))
+              .product(product)
+              .build());
+    product.addImages(assetList);
+    productService.save(product);
     return BaseResponse.ok();
   }
 }

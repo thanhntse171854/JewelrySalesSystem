@@ -137,4 +137,26 @@ public class RestExceptionHanlder extends ResponseEntityExceptionHandler {
             new ExceptionResponse(roleException.getErrorCode(), roleException.getMessage()), false),
         HttpStatus.BAD_REQUEST);
   }
+
+  @ExceptionHandler(ChangePasswordException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleProductException(
+      ChangePasswordException changePasswordException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(
+                changePasswordException.getErrorCode(), changePasswordException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(GemException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleProductException(
+      GemException gemException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(gemException.getErrorCode(), gemException.getMessage()), false),
+        HttpStatus.BAD_REQUEST);
+  }
 }

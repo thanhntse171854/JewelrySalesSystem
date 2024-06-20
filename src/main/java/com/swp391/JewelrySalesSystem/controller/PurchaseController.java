@@ -7,13 +7,11 @@ import com.swp391.JewelrySalesSystem.request.PurchaseOrderRequest;
 import com.swp391.JewelrySalesSystem.request.ValidateOrderRequest;
 import com.swp391.JewelrySalesSystem.response.*;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -28,8 +26,8 @@ public class PurchaseController {
   @Operation(
       summary = "Validate order",
       tags = {"Purchase Order APIs"})
-  @SecurityRequirement(name = "Bearer Authentication")
-  @PreAuthorize("isAuthenticated()")
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("isAuthenticated()")
   public BaseResponse<OrderHistoryResponse> validateOrder(
       @RequestBody ValidateOrderRequest request) {
     return this.purchaseFacade.validateOrder(request);
@@ -40,8 +38,8 @@ public class PurchaseController {
   @Operation(
       summary = "Create purchase order by Seller",
       tags = {"Purchase Order APIs"})
-  @SecurityRequirement(name = "Bearer Authentication")
-  @PreAuthorize("isAuthenticated()")
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("isAuthenticated()")
   public BaseResponse<Void> createPurchase(@RequestBody @Nullable PurchaseOrderRequest request) {
     return this.purchaseFacade.createPurchase(request);
   }
@@ -51,8 +49,8 @@ public class PurchaseController {
   @Operation(
       summary = "Get purchase order detail",
       tags = {"Purchase Order APIs"})
-  @SecurityRequirement(name = "Bearer Authentication")
-  @PreAuthorize("isAuthenticated()")
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("isAuthenticated()")
   public BaseResponse<PurchaseOrderDetailResponse> getPurchaseDetail(
       @PathVariable("code") String code) {
     return this.purchaseFacade.getDetailPurchase(code);
@@ -63,8 +61,8 @@ public class PurchaseController {
   @Operation(
       summary = "Payment purchase order",
       tags = {"Purchase Order APIs"})
-  @SecurityRequirement(name = "Bearer Authentication")
-  @PreAuthorize("hasRole('ROLE_CASHIER_STAFF')")
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("hasRole('ROLE_CASHIER_STAFF')")
   public BaseResponse<Void> payment(@RequestBody PaymentRequest request) {
     return this.purchaseFacade.payment(request);
   }
@@ -74,8 +72,8 @@ public class PurchaseController {
   @Operation(
       summary = "Get gem price by filter",
       tags = {"Purchase Order APIs"})
-  @SecurityRequirement(name = "Bearer Authentication")
-  @PreAuthorize("isAuthenticated()")
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("isAuthenticated()")
   public BaseResponse<List<GemPriceResponse>> getGemPrice(
       @RequestParam(required = false) String cut,
       @RequestParam(required = false) Float carat,
@@ -99,8 +97,8 @@ public class PurchaseController {
   @Operation(
       summary = "Generate PDF",
       tags = {"Purchase Order APIs"})
-  @SecurityRequirement(name = "Bearer Authentication")
-  @PreAuthorize("isAuthenticated()")
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("isAuthenticated()")
   public ResponseEntity<byte[]> generatePDF(@PathVariable("code") String code) {
     return this.purchaseFacade.generateDocument(code);
   }
@@ -110,8 +108,8 @@ public class PurchaseController {
   @Operation(
       summary = "Get All Purchase Order",
       tags = {"Purchase Order APIs"})
-  @SecurityRequirement(name = "Bearer Authentication")
-  @PreAuthorize("isAuthenticated()")
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("isAuthenticated()")
   public BaseResponse<List<PurchaseOrderResponse>> getAllPurchaseOrder() {
     return this.purchaseFacade.getAllPurchaseOrder();
   }
@@ -121,8 +119,8 @@ public class PurchaseController {
   @Operation(
       summary = "Delete purchase order by seller or cashier",
       tags = {"Purchase Order APIs"})
-  @SecurityRequirement(name = "Bearer Authentication")
-  @PreAuthorize("isAuthenticated()")
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("isAuthenticated()")
   public BaseResponse<Void> deletePreOrderByKey(@PathVariable("code") String code) {
     return this.purchaseFacade.deleteOderByKey(code);
   }

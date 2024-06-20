@@ -33,7 +33,7 @@ public class PriceServiceImpl implements PriceService {
   public GemPriceList findGemPriceList(Gem gem) {
     return gemPriceRepository
         .findGemPriceListByGemId(gem.getId(), System.currentTimeMillis())
-        .orElseThrow(() -> new PriceListException(ErrorCode.GEM_PRICE_LIST_NOT_FOUND));
+        .orElse(null);
   }
 
   @Override

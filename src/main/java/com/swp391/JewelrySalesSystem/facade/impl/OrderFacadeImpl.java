@@ -7,6 +7,7 @@ import com.swp391.JewelrySalesSystem.enums.*;
 import com.swp391.JewelrySalesSystem.exception.OrderExcetpion;
 import com.swp391.JewelrySalesSystem.exception.PaymentException;
 import com.swp391.JewelrySalesSystem.facade.OrderFacade;
+import com.swp391.JewelrySalesSystem.request.OrderCriteria;
 import com.swp391.JewelrySalesSystem.request.PaymentRequest;
 import com.swp391.JewelrySalesSystem.request.UpsertOrderRequest;
 import com.swp391.JewelrySalesSystem.response.*;
@@ -73,8 +74,9 @@ public class OrderFacadeImpl implements OrderFacade {
   }
 
   @Override
-  public BaseResponse<List<OrderResponse>> getOrderProductBySeller(Long id) {
-    List<Orders> orders = orderService.findOrderBySeller(id);
+  public BaseResponse<PaginationResponse<List<OrderResponse>>> getOrderProductBySeller(
+      OrderCriteria orderCriteria) {
+    var orders = orderService.findByFilter(orderCriteria);
     List<OrderResponse> list = new ArrayList<>();
     for (var order : orders) {
       list.add(
@@ -87,9 +89,11 @@ public class OrderFacadeImpl implements OrderFacade {
               .paymentMethod(order.getPaymentMethod())
               .totalPrice(order.getTotalAmount())
               .discount(order.getDiscount())
+              .createAt(order.getCreatedAt())
               .build());
     }
-    return BaseResponse.build(list, true);
+    int currentPage = (orderCriteria.getCurrentPage() == null) ? 1 : orderCriteria.getCurrentPage();
+    return BaseResponse.build(PaginationResponse.build(list, orders, currentPage), true);
   }
 
   @Override

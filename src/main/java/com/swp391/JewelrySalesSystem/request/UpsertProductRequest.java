@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateProductRequest {
+public class UpsertProductRequest {
   @NotEmpty(message = "Product code is required")
   private String productCode;
 
@@ -21,6 +21,7 @@ public class CreateProductRequest {
   private String productName;
 
   private Long gemCost;
+
   private Long productionCost;
 
   @NotEmpty(message = "Gender name is required")
@@ -31,11 +32,24 @@ public class CreateProductRequest {
 
   private List<MaterialProductRequest> materialProductRequests;
 
-  private Long gem;
+  private Long gemId;
+
+  private String gemCode;
+
+  private String diamondName;
+
+  private String origin;
+
+  private String color;
+
+  private String clarity;
+
+  private String cut;
+
+  private Float carat;
+
+  private boolean isJewelryDiamond;
 
   @NotEmpty(message = "Size name is required")
   private Size size;
-
-  //    @NotEmpty(message = "At least one image is required")
-  //    private List<MultipartFile> images;
 }

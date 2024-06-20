@@ -18,4 +18,5 @@ public class OrderResponse {
   private PaymentMethod paymentMethod;
   private Float totalPrice;
   private Float discount;
+  private Long createAt;
 }

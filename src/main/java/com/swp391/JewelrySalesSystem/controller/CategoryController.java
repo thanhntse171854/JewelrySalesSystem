@@ -4,11 +4,9 @@ import com.swp391.JewelrySalesSystem.facade.CategoryFacade;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
 import com.swp391.JewelrySalesSystem.response.CategoryResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -22,8 +20,8 @@ public class CategoryController {
   @Operation(
       summary = "Get all category",
       tags = {"Category APIs"})
-  @SecurityRequirement(name = "Bearer Authentication")
-  @PreAuthorize("isAuthenticated()")
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("isAuthenticated()")
   public BaseResponse<List<CategoryResponse>> findAll() {
     return this.categoryFacade.getAllCategory();
   }

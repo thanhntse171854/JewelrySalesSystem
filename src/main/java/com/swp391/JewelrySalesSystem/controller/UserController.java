@@ -1,6 +1,7 @@
 package com.swp391.JewelrySalesSystem.controller;
 
 import com.swp391.JewelrySalesSystem.facade.UserFacade;
+import com.swp391.JewelrySalesSystem.request.ChangePasswordRequest;
 import com.swp391.JewelrySalesSystem.request.LoginRequest;
 import com.swp391.JewelrySalesSystem.request.UpdateProfileRequest;
 import com.swp391.JewelrySalesSystem.request.UpdateRoleRequest;
@@ -9,14 +10,12 @@ import com.swp391.JewelrySalesSystem.response.EmployeeResponse;
 import com.swp391.JewelrySalesSystem.response.LoginResponse;
 import com.swp391.JewelrySalesSystem.response.UserProfileResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,11 +37,11 @@ public class UserController {
 
   @PostMapping("/logout")
   @ResponseStatus(HttpStatus.OK)
-  @SecurityRequirement(name = "Bearer Authentication")
+  //  @SecurityRequirement(name = "Bearer Authentication")
   @Operation(
       tags = {"USER APIs"},
       summary = "User logout")
-  @PreAuthorize("isAuthenticated()")
+  //  @PreAuthorize("isAuthenticated()")
   public BaseResponse<Void> logout() {
     this.userFacade.logout();
     return BaseResponse.ok();
@@ -50,36 +49,48 @@ public class UserController {
 
   @GetMapping("/profile/{id}")
   @ResponseStatus(HttpStatus.OK)
-  @SecurityRequirement(name = "Bearer Authentication")
+  //  @SecurityRequirement(name = "Bearer Authentication")
   @Operation(
       tags = {"USER APIs"},
       summary = "Get profile of Staff")
-  @PreAuthorize("isAuthenticated()")
+  //  @PreAuthorize("isAuthenticated()")
   public BaseResponse<UserProfileResponse> getProfile(@PathVariable("id") Long id) {
     return this.userFacade.getProfile(id);
   }
 
-  @PostMapping("/update/{id}")
+  @PutMapping("/update/{id}")
   @ResponseStatus(HttpStatus.OK)
-  @SecurityRequirement(name = "Bearer Authentication")
+  //  @SecurityRequirement(name = "Bearer Authentication")
   @Operation(
       tags = {"USER APIs"},
       summary = "Update profile by Staff")
-  @PreAuthorize("isAuthenticated()")
+  //  @PreAuthorize("isAuthenticated()")
   public BaseResponse<UserProfileResponse> updateProfile(
       @RequestBody @Nullable UpdateProfileRequest request) {
     return this.userFacade.updateProfileByStaff(request);
   }
 
-  @PostMapping(value = "/update-avatar/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PutMapping(value = "/update-avatar/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       tags = {"USER APIs"},
       summary = "Update role by Admin")
-  @SecurityRequirement(name = "Bearer Authentication")
+  //  @SecurityRequirement(name = "Bearer Authentication")
   public BaseResponse<String> updateAvatar(
       @PathVariable("id") Long id, @RequestPart MultipartFile file) {
     return this.userFacade.updateAvatar(id, file);
+  }
+
+  @PostMapping("/change-password")
+  @ResponseStatus(HttpStatus.OK)
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  @Operation(
+      tags = {"USER APIs"},
+      summary = "Change password by staff")
+  //  @PreAuthorize("isAuthenticated()")
+  public BaseResponse<Void> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+    this.userFacade.changePassword(request);
+    return BaseResponse.ok();
   }
 
   @GetMapping("/staff")
@@ -87,8 +98,8 @@ public class UserController {
   @Operation(
       tags = {"USER APIs"},
       summary = "Get all staff")
-  @SecurityRequirement(name = "Bearer Authentication")
-  @PreAuthorize("hasRole('ROLE_MANAGER') && hasRole('ROLE_ADMIN')")
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("hasRole('ROLE_MANAGER') && hasRole('ROLE_ADMIN')")
   public BaseResponse<List<EmployeeResponse>> getStaff() {
     return this.userFacade.findAllStaff();
   }
@@ -98,8 +109,8 @@ public class UserController {
   @Operation(
       tags = {"USER APIs"},
       summary = "Delete staff by Id")
-  @SecurityRequirement(name = "Bearer Authentication")
-  @PreAuthorize("hasRole('ROLE_MANAGER') && hasRole('ROLE_ADMIN')")
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("hasRole('ROLE_MANAGER') && hasRole('ROLE_ADMIN')")
   public BaseResponse<Void> deleteStaff(@PathVariable("id") Long id) {
     return this.userFacade.deactivateStaff(id);
   }
@@ -108,9 +119,9 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       tags = {"USER APIs"},
-      summary = "Get profile saff by admin or manager")
-  @SecurityRequirement(name = "Bearer Authentication")
-  @PreAuthorize("hasRole('ROLE_MANAGER') && hasRole('ROLE_ADMIN')")
+      summary = "Get profile staff by admin or manager")
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("hasRole('ROLE_MANAGER') && hasRole('ROLE_ADMIN')")
   public BaseResponse<UserProfileResponse> getProfileDetail(@RequestParam("id") Long id) {
     return this.userFacade.getProfileDetail(id);
   }
@@ -120,8 +131,8 @@ public class UserController {
   @Operation(
       tags = {"USER APIs"},
       summary = "Update role by Admin")
-  @SecurityRequirement(name = "Bearer Authentication")
-  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public BaseResponse<UserProfileResponse> updateRole(@RequestBody UpdateRoleRequest request) {
     return this.userFacade.updateRole(request);
   }
