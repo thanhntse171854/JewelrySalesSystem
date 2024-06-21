@@ -2,8 +2,10 @@ package com.swp391.JewelrySalesSystem.service.impl;
 
 import com.swp391.JewelrySalesSystem.entity.User;
 import com.swp391.JewelrySalesSystem.enums.ErrorCode;
+import com.swp391.JewelrySalesSystem.exception.CreateEmployeeException;
 import com.swp391.JewelrySalesSystem.exception.LoginException;
 import com.swp391.JewelrySalesSystem.repository.UserRepository;
+import com.swp391.JewelrySalesSystem.request.CreateEmployeeRequest;
 import com.swp391.JewelrySalesSystem.security.SecurityAccountDetails;
 import com.swp391.JewelrySalesSystem.service.UserService;
 import java.util.List;
@@ -47,6 +49,18 @@ public class UserServiceImpl implements UserService {
   @Override
   public void save(User user) {
     userRepository.save(user);
+  }
+
+  @Override
+  public void validateCreate(CreateEmployeeRequest request) {
+    boolean isExistsByPhoneNumber = userRepository.existsByPhone(request.getPhone());
+    boolean isExistsByEmail = userRepository.existsByEmail(request.getEmail());
+
+    boolean isPhoneAndEmailExisted = isExistsByPhoneNumber && isExistsByEmail;
+
+    if (isPhoneAndEmailExisted) throw new CreateEmployeeException(ErrorCode.PHONE_AND_MAIL_EXIST);
+    if (isExistsByEmail) throw new CreateEmployeeException(ErrorCode.EMAIL_EXIST);
+    if (isExistsByPhoneNumber) throw new CreateEmployeeException(ErrorCode.PHONE_EXIST);
   }
 
   @Override

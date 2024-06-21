@@ -20,9 +20,21 @@ public interface OrderRepository extends JpaRepository<Orders, Long> {
   Orders findOrderByOrderCodeAndCustomerPhone(
       @Param("code") String code, @Param("phone") String phone);
 
+  @Query(
+      value = "SELECT o.* FROM orders o WHERE o.created_at BETWEEN :startDate AND :endDate",
+      nativeQuery = true)
+  List<Orders> findByDate(@Param("startDate") Long startDate, @Param("endDate") Long endDate);
+
   Optional<Orders> findByOrderCode(String code);
 
   List<Orders> findByUserId(Long id);
 
   Page<Orders> findAll(Specification<Orders> specification, Pageable pageable);
+
+  @Query(
+      value =
+          "SELECT o.staff_id , COUNT(o.id) AS orderCount FROM Orders o where o.created_at  between :startDate AND :endDate GROUP BY o.staff_id  ORDER BY orderCount desc limit 1",
+      nativeQuery = true)
+  List<Object[]> findStaffAndTotalOrderByStaff(
+      @Param("startDate") Long startDate, @Param("endDate") Long endDate);
 }

@@ -94,4 +94,14 @@ public class OrderServiceImpl implements OrderService {
 
     return orderRepository.findAll(specification, pageable);
   }
+
+  @Override
+  public List<Orders> findOrderByDate(Long start, Long end) {
+    return orderRepository.findByDate(start, end);
+  }
+
+  @Override
+  public List<Object[]> findStaffAndTotalOrderByStaff(Long start, Long end) {
+    return orderRepository.findStaffAndTotalOrderByStaff(start, end);
+  }
 }
