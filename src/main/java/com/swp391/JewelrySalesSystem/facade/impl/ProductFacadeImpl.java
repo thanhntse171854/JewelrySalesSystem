@@ -96,6 +96,7 @@ public class ProductFacadeImpl implements ProductFacade {
         .totalPrice(totalPrice)
         .gem(gemDTOS)
         .size(product.getSize())
+        .categoryId(product.getCategory().getId())
         .build();
   }
 
@@ -242,8 +243,8 @@ public class ProductFacadeImpl implements ProductFacade {
         Product.builder()
             .productCode(request.getProductCode())
             .productName(request.getProductName())
-            .gemCost(request.getGemCost())
-            .productionCost(request.getProductionCost())
+            .gemCost(request.getGemCost() == null ? 0L : request.getGemCost())
+            .productionCost(request.getProductionCost() == null ? 0L : request.getProductionCost())
             .gender(request.getGender())
             .category(productCategory)
             .size(request.getSize())

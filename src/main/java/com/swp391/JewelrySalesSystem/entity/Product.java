@@ -28,10 +28,12 @@ public class Product extends BaseEntity implements Serializable {
   private String productImage;
 
   @Column(name = "gem_cost")
-  private Long gemCost;
+  @Builder.Default
+  private Long gemCost = 0L;
 
   @Column(name = "production_cost")
-  private Long productionCost;
+  @Builder.Default
+  private Long productionCost = 0L;
 
   @Column(name = "gender", length = 10)
   @Enumerated(EnumType.STRING)

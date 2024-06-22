@@ -15,6 +15,7 @@ import lombok.*;
 public class ProductDetailResponse {
   private Long id;
   private String productCode;
+  private Long categoryId;
   private String productName;
   private Long gemCost;
   private Long productionCost;
