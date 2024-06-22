@@ -1,10 +1,7 @@
 package com.swp391.JewelrySalesSystem.controller;
 
 import com.swp391.JewelrySalesSystem.facade.UserFacade;
-import com.swp391.JewelrySalesSystem.request.ChangePasswordRequest;
-import com.swp391.JewelrySalesSystem.request.LoginRequest;
-import com.swp391.JewelrySalesSystem.request.UpdateProfileRequest;
-import com.swp391.JewelrySalesSystem.request.UpdateRoleRequest;
+import com.swp391.JewelrySalesSystem.request.*;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
 import com.swp391.JewelrySalesSystem.response.EmployeeResponse;
 import com.swp391.JewelrySalesSystem.response.LoginResponse;
@@ -135,5 +132,15 @@ public class UserController {
   //  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public BaseResponse<UserProfileResponse> updateRole(@RequestBody UpdateRoleRequest request) {
     return this.userFacade.updateRole(request);
+  }
+
+  @PostMapping("/create")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      tags = {"USER APIs"},
+      summary = "Add new employee")
+  public BaseResponse<Void> createEmployee(@RequestBody CreateEmployeeRequest request) {
+    this.userFacade.createEmployee(request);
+    return BaseResponse.ok();
   }
 }

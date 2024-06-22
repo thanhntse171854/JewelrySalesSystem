@@ -17,4 +17,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
   @Transactional
   @Query(value = "update users u set is_active = false where u.id = :id", nativeQuery = true)
   void deactivateStaffById(@Param("id") Long id);
+
+  boolean existsByPhone(String phone);
+
+  boolean existsByEmail(String email);
 }

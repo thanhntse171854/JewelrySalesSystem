@@ -23,4 +23,8 @@ public interface OrderService {
   List<Orders> findOrderBySeller(Long id);
 
   Page<Orders> findByFilter(OrderCriteria criteria);
+
+  List<Orders> findOrderByDate(Long start, Long end);
+
+  List<Object[]> findStaffAndTotalOrderByStaff(Long start, Long end);
 }

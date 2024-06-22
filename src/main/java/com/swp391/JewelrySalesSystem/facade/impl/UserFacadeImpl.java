@@ -7,10 +7,7 @@ import com.swp391.JewelrySalesSystem.enums.RoleUser;
 import com.swp391.JewelrySalesSystem.exception.ChangePasswordException;
 import com.swp391.JewelrySalesSystem.exception.LoginException;
 import com.swp391.JewelrySalesSystem.facade.UserFacade;
-import com.swp391.JewelrySalesSystem.request.ChangePasswordRequest;
-import com.swp391.JewelrySalesSystem.request.LoginRequest;
-import com.swp391.JewelrySalesSystem.request.UpdateProfileRequest;
-import com.swp391.JewelrySalesSystem.request.UpdateRoleRequest;
+import com.swp391.JewelrySalesSystem.request.*;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
 import com.swp391.JewelrySalesSystem.response.EmployeeResponse;
 import com.swp391.JewelrySalesSystem.response.LoginResponse;
@@ -97,6 +94,7 @@ public class UserFacadeImpl implements UserFacade {
             .address(user.getAddress())
             .birthday(user.getDateOfBirth())
             .roleUser(getRole(user))
+            .isActive(user.isActive())
             .build(),
         true);
   }
@@ -248,5 +246,30 @@ public class UserFacadeImpl implements UserFacade {
             SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     User user = userService.findById(principal.getId());
     tokenService.deleteRefreshToken(user.getId());
+  }
+
+  @Override
+  public void createEmployee(CreateEmployeeRequest request) {
+    userService.validateCreate(request);
+
+    boolean isValidConfirmPassword = request.getPassword().equals(request.getConfirmPassword());
+    if (!isValidConfirmPassword)
+      throw new ChangePasswordException(ErrorCode.INVALID_CONFIRM_PASSWORD);
+
+    User user =
+        User.builder()
+            .name(request.getName())
+            .email(request.getEmail())
+            .address(request.getAddress())
+            .phone(request.getPhone())
+            .gender(request.getGender())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .dateOfBirth(request.getDateOfBirth())
+            .build();
+
+    Role userRole = roleService.findRole(request.getRole());
+
+    user.addRole(userRole);
+    userService.save(user);
   }
 }
