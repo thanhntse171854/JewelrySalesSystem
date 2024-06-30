@@ -32,7 +32,9 @@ public enum ErrorCode {
   PHONE_AND_MAIL_EXIST("1022", "Both phone number and email already exist"),
   EMAIL_EXIST("1023", "Email already exists"),
   PHONE_EXIST("1024", "Phone number already exists"),
-  INVALID_CONFIRM_PASSWORD("1025", "Password and confirm password does not match");
+  INVALID_CONFIRM_PASSWORD("1025", "Password and confirm password does not match"),
+  CUSTOMER_NOT_FOUND("1026", "Customer not found"),
+  CREATE_MATERIAL_NULL("1027", "Material name is null");
 
   private final String code;
   private final String message;

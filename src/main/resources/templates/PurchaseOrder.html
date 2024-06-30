@@ -148,29 +148,22 @@
         <thead>
         <tr>
             <th>No.</th>
-            <th>ProductName</th>
-            <th>Gold Type</th>
-            <th>Weight</th>
-            <th>Size</th>
-            <th>Carat</th>
-            <th>Clarity</th>
-            <th>Color</th>
-            <th>Origin</th>
-            <th>Amount</th>
+            <th>Detail</th>
+            <th>Price</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="product, index : ${order.list}">
             <td th:text="${index.index + 1}"></td>
-            <td th:text="${(product.productCode != null ? product.productCode : '') + ' ' + (product.productName != null ? product.productName : '')}"></td>
-            <td th:text="${product.material}"></td>
-            <td th:text="${product.weight}"></td>
-            <td th:text="${product.size}"></td>
-            <td th:text="${product.carat}"></td>
-            <td th:text="${product.clarity}"></td>
-            <td th:text="${product.color}"></td>
-            <td th:text="${product.origin}"></td>
-            <td th:text="${product.price}"></td>
+            <td>
+                <span th:text="${product.productName}"></span>
+                <span th:if="${product.material != null}"> - Material: <span th:text="${product.material}"></span></span>
+                <span th:if="${product.weight != null}"> - Weight: <span th:text="${product.weight}"></span>g</span>
+                <span th:if="${product.carat != null}"> - Carat: <span th:text="${product.carat}"></span></span>
+                <span th:if="${product.clarity != null}"> - Clarity: <span th:text="${product.clarity}"></span></span>
+                <span th:if="${product.color != null}"> - Color: <span th:text="${product.color}"></span></span>
+            </td>
+            <td th:text="'$' + ${product.price}"></td>
         </tr>
         </tbody>
     </table>

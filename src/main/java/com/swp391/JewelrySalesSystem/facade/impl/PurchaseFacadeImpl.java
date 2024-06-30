@@ -224,6 +224,7 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
                 .productName(product.getProductName())
                 .productCode(product.getProductCode())
                 .size(product.getSize().toString())
+                .price(puchase.getPrice())
                 .build());
       }
     }

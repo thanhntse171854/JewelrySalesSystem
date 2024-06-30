@@ -58,6 +58,10 @@ public class Customer extends BaseEntity implements Serializable {
     this.totalAmountPurchased = totalAmountPurchased;
   }
 
+  public void updatePhone(String phone) {
+    this.phone = phone;
+  }
+
   public void updateName(String name) {
     this.name = name;
   }

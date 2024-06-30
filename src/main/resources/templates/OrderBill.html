@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -173,7 +173,7 @@
             <th>No.</th>
             <th>Code</th>
             <th>Name</th>
-            <th>Size</th>
+            <th>Quantity</th>
             <th>Amount</th>
         </tr>
         </thead>
@@ -182,17 +182,30 @@
             <td th:text="${index.index + 1}"></td>
             <td th:text="${product.code}"></td>
             <td th:text="${product.name}"></td>
-            <td th:text="${product.size}"></td>
+            <td th:text="${product.quantity}"></td>
             <td th:text="${product.price}"></td>
         </tr>
         </tbody>
     </table>
     <div class="total-section">
-        <p>Discount: <span th:text="${'$' + order.discount}">__________</span></p>
+        <p>Discount: <span th:text="${'%' + order.discount}">__________</span></p>
         <p>Total Amount: <span th:text="${'$' + order.totalAmount}">________ </span></p>
     </div>
-    <div class="Warranty"><p>Warranty 6 months from date: _________<span th:text="${order.warrantyTo}"></span>_________________
-    </p></div>
+
+    <div class="Warranty">
+        <p>Warranty 6 months from date: _________<span th:text="${order.warrantyTo}">29/12/2024</span>_________________
+            (*for product code:
+            <span th:if="${#lists.size(order.list)} > 0">
+            <span th:each="product, index : ${order.list}">
+                <span th:if="${product.categoryType == T(com.swp391.JewelrySalesSystem.enums.CategoryType).JEWELRY}">
+                    <span th:text="${product.code}"></span>
+                    <span th:if="${index.index + 1 < #lists.size(order.list)}">, </span>
+                </span>
+            </span>
+        </span>)
+        </p>
+    </div>
+
     <div class="sign-section">
         <div class="sign-box">
             <p>Buyer:</p>

@@ -6,6 +6,8 @@ import java.util.List;
 public interface CustomerService {
   Customer findByPhone(String phone);
 
+  Customer findById(Long id);
+
   List<Customer> findAll();
 
   void save(Customer customer);

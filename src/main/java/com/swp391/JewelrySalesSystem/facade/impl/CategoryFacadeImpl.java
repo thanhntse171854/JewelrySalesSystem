@@ -25,6 +25,7 @@ public class CategoryFacadeImpl implements CategoryFacade {
                         .id(category.getId())
                         .categoryName(category.getCategoryName())
                         .categoryType(category.getCategoryType().toString())
+                        .buyBackPromotion(category.getBuyBackPromotion())
                         .build())
             .toList();
     return BaseResponse.build(categoryResponses, true);

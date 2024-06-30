@@ -5,13 +5,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class CategoryResponse {
+public class MaterialResponse {
   private Long id;
-  private String categoryName;
-  private String categoryType;
-  private Float buyBackPromotion;
+  private String material;
 }
