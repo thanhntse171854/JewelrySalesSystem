@@ -24,4 +24,6 @@ public interface PurchaseFacade {
   BaseResponse<Void> deleteOderByKey(String code);
 
   BaseResponse<PurchaseOrderDetailResponse> getDetailPurchase(String code);
+
+  BaseResponse<List<PurchaseOrderResponse>> getAllPurchaseOrderBySeller(Long id);
 }

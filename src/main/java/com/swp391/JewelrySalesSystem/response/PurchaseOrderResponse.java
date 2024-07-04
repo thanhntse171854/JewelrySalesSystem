@@ -1,5 +1,6 @@
 package com.swp391.JewelrySalesSystem.response;
 
+import com.swp391.JewelrySalesSystem.enums.PaymentMethod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,4 +18,5 @@ public class PurchaseOrderResponse {
   private Long dateOrder;
   private String customerPhone;
   private String customerName;
+  private PaymentMethod paymentMethod;
 }

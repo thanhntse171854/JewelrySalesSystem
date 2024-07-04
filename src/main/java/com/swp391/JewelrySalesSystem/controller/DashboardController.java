@@ -1,9 +1,7 @@
 package com.swp391.JewelrySalesSystem.controller;
 
 import com.swp391.JewelrySalesSystem.facade.DashboardFacade;
-import com.swp391.JewelrySalesSystem.response.BaseResponse;
-import com.swp391.JewelrySalesSystem.response.CategoryTypeMostOrderResponse;
-import com.swp391.JewelrySalesSystem.response.StaffCreateMostOrderResponse;
+import com.swp391.JewelrySalesSystem.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -80,5 +78,27 @@ public class DashboardController {
   //  @PreAuthorize("isAuthenticated()")
   public BaseResponse<List<CategoryTypeMostOrderResponse>> getCategoryTypeMostOrder() {
     return this.dashboardFacade.getCategoryTypeMostOrder();
+  }
+
+  @GetMapping("/sales-total-amount-year")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Get total Amount for a specific month",
+      tags = {"Dashboard APIs"})
+  // @SecurityRequirement(name = "Bearer Authentication")
+  // @PreAuthorize("isAuthenticated()")
+  public BaseResponse<List<TotalAmountMonthResponse>> getSalesTotalAmount(@RequestParam int year) {
+    return this.dashboardFacade.getSalesTotalAmount(year);
+  }
+
+  @GetMapping("/sales-total-amounts-week")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Get total Amount for each day of the current week",
+      tags = {"Dashboard APIs"})
+  // @SecurityRequirement(name = "Bearer Authentication")
+  // @PreAuthorize("isAuthenticated()")
+  public BaseResponse<List<TotalAmountDayResponse>> getSalesTotalAmountsThisWeek() {
+    return this.dashboardFacade.getSalesTotalAmountsThisWeek();
   }
 }

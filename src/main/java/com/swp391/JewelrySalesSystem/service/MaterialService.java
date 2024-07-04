@@ -11,4 +11,6 @@ public interface MaterialService {
   void save(Material material);
 
   void delete(Material material);
+
+  void deactivateMaterial(Long id);
 }

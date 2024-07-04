@@ -56,7 +56,7 @@ public class MaterialFacadeImpl implements MaterialFacade {
   @Override
   public BaseResponse<Void> deleteMaterial(Long id) {
     Material material = materialService.findById(id);
-    materialService.delete(material);
+    materialService.deactivateMaterial(material.getId());
     return BaseResponse.ok();
   }
 }

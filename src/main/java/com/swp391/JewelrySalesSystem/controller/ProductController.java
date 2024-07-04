@@ -56,6 +56,17 @@ public class ProductController {
     return this.productFacade.findById(id);
   }
 
+  @GetMapping("/active/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Get product detail by product id not active",
+      tags = {"Product APIs"})
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("isAuthenticated()")
+  public BaseResponse<ProductDetailResponse> getProductByIdForAll(@PathVariable("id") Long id) {
+    return this.productFacade.findByIdForAll(id);
+  }
+
   @PostMapping("/create")
   @ResponseStatus(HttpStatus.CREATED)
   @Operation(

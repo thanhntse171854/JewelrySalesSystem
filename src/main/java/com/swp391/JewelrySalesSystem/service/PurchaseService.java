@@ -8,6 +8,8 @@ public interface PurchaseService {
 
   List<PurchaseOrder> findAll();
 
+  List<PurchaseOrder> findBySellerId(Long id);
+
   void save(PurchaseOrder purchaseOrder);
 
   void deleteById(Long id);

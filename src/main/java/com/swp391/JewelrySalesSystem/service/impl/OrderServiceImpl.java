@@ -67,6 +67,7 @@ public class OrderServiceImpl implements OrderService {
             Orders.builder()
                 .deliveryStatus(DeliveryStatus.PENDING)
                 .paymentMethod(PaymentMethod.NONE)
+                .discount(0F)
                 .build());
   }
 

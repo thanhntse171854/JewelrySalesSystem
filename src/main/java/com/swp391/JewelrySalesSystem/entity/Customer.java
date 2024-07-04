@@ -29,10 +29,12 @@ public class Customer extends BaseEntity implements Serializable {
   private Long dateOfBirth;
 
   @Column(name = "percent_discount")
-  private Float percentDiscount;
+  @Builder.Default
+  private Float percentDiscount = 0F;
 
   @Column(name = "total_amount_purchased")
-  private Float totalAmountPurchased;
+  @Builder.Default
+  private Float totalAmountPurchased = 0F;
 
   @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @Builder.Default

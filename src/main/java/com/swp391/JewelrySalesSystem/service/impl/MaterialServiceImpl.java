@@ -36,4 +36,9 @@ public class MaterialServiceImpl implements MaterialService {
   public void delete(Material material) {
     materialRepository.delete(material);
   }
+
+  @Override
+  public void deactivateMaterial(Long id) {
+    materialRepository.deactivateMaterialById(id);
+  }
 }
