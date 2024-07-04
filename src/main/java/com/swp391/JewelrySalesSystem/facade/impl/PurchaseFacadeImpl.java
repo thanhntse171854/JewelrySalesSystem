@@ -224,6 +224,7 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
                 .productName(product.getProductName())
                 .productCode(product.getProductCode())
                 .size(product.getSize().toString())
+                .price(puchase.getPrice())
                 .build());
       }
     }
@@ -274,6 +275,7 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
               .salesStaffName(purchase.getUser().getName())
               .totalPrice(purchase.getTotalPrice())
               .orderCode(purchase.getPurchaseOrderCode())
+              .paymentMethod(purchase.getPaymentMethod())
               .build());
     }
     return BaseResponse.build(purchaseOrderResponses, true);
@@ -303,6 +305,7 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
             .birthday(purchaseOrder.getCustomer().getDateOfBirth())
             .orderCode(purchaseOrder.getPurchaseOrderCode())
             .totalAmount(purchaseOrder.getTotalPrice())
+            .paymentMethod(purchaseOrder.getPaymentMethod())
             .build(),
         true);
   }
@@ -311,5 +314,25 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
     Random random = new Random();
     int otp = random.nextInt(9999);
     return String.format("%06d", otp);
+  }
+
+  @Override
+  public BaseResponse<List<PurchaseOrderResponse>> getAllPurchaseOrderBySeller(Long id) {
+    List<PurchaseOrder> list = purchaseService.findBySellerId(id);
+    List<PurchaseOrderResponse> purchaseOrderResponses = new ArrayList<>();
+    for (var purchase : list) {
+      purchaseOrderResponses.add(
+          PurchaseOrderResponse.builder()
+              .orderId(purchase.getId())
+              .customerPhone(purchase.getCustomer().getPhone())
+              .dateOrder(purchase.getCreatedAt())
+              .customerName(purchase.getCustomer().getName())
+              .salesStaffName(purchase.getUser().getName())
+              .totalPrice(purchase.getTotalPrice())
+              .orderCode(purchase.getPurchaseOrderCode())
+              .paymentMethod(purchase.getPaymentMethod())
+              .build());
+    }
+    return BaseResponse.build(purchaseOrderResponses, true);
   }
 }

@@ -24,9 +24,6 @@ public class Product extends BaseEntity implements Serializable {
   @Column(name = "product_name", nullable = false, length = 100)
   private String productName;
 
-  @Column(name = "product_image", columnDefinition = "text")
-  private String productImage;
-
   @Column(name = "gem_cost")
   @Builder.Default
   private Long gemCost = 0L;

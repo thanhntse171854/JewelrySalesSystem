@@ -7,4 +7,10 @@ public interface MaterialService {
   List<Material> getAllMaterial();
 
   Material findById(Long id);
+
+  void save(Material material);
+
+  void delete(Material material);
+
+  void deactivateMaterial(Long id);
 }

@@ -24,4 +24,8 @@ public class Material extends BaseEntity implements Serializable {
 
   @OneToMany(mappedBy = "material", cascade = CascadeType.ALL)
   private List<ProductMaterial> productMaterials = new ArrayList<>();
+
+  public void updateName(String name) {
+    this.name = name;
+  }
 }

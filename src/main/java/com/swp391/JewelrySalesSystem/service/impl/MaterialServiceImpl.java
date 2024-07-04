@@ -12,7 +12,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class MaterialServiceImpl implements MaterialService {
+
   private final MaterialRepository materialRepository;
+
+  @Override
+  public void save(Material material) {
+    materialRepository.save(material);
+  }
 
   @Override
   public List<Material> getAllMaterial() {
@@ -24,5 +30,15 @@ public class MaterialServiceImpl implements MaterialService {
     return materialRepository
         .findById(id)
         .orElseThrow(() -> new MaterialException(ErrorCode.MATERIAL_NOT_FOUND));
+  }
+
+  @Override
+  public void delete(Material material) {
+    materialRepository.delete(material);
+  }
+
+  @Override
+  public void deactivateMaterial(Long id) {
+    materialRepository.deactivateMaterialById(id);
   }
 }

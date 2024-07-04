@@ -46,7 +46,7 @@ public class OrderFacadeImpl implements OrderFacade {
     User user = userService.findById(orderRequest.getStaffId());
     Customer customer = customerService.findByPhone(orderRequest.getPhone());
     Orders orders = orderService.findOrderByCode(orderRequest.getOrderCode());
-
+    orders.updateDiscount(orderRequest.getDiscount() != null ? orderRequest.getDiscount() : 0F);
     if (customer == null) {
       customer =
           Customer.builder()
@@ -133,6 +133,10 @@ public class OrderFacadeImpl implements OrderFacade {
         payment.updateStatus(PaymentStatus.SUCCESS);
       }
       paymentService.savePayment(payment);
+      for (var order : orders.getOrderDetails()) {
+        Product product = productService.findByProductIdAndActive(order.getProduct().getId());
+        productService.deactivateProduct(product.getId());
+      }
       return BaseResponse.ok();
     } else {
       if (payment != null) {
@@ -178,10 +182,6 @@ public class OrderFacadeImpl implements OrderFacade {
     Orders orders = orderService.findByOrderCode(code);
     if (orders.getDeliveryStatus().isPending()) {
       orders.updateDelivery(DeliveryStatus.SUCCESS);
-      for (var order : orders.getOrderDetails()) {
-        Product product = productService.findByProductIdAndActive(order.getProduct().getId());
-        productService.deactivateProduct(product.getId());
-      }
       orderService.save(orders);
       return BaseResponse.ok();
     }
@@ -196,12 +196,22 @@ public class OrderFacadeImpl implements OrderFacade {
 
     List<OrderDetailProductDTO> orderDetailProductDTOS = new ArrayList<>();
     for (var order : orders.getOrderDetails()) {
+      float quantity = 1f;
+      boolean isNotJewelryOrDiamond =
+          !order.getProduct().getCategory().getCategoryType().equals(CategoryType.JEWELRY)
+              && !order.getProduct().getCategory().getCategoryType().equals(CategoryType.DIAMOND);
+      if (isNotJewelryOrDiamond) {
+        quantity = order.getProduct().getProductMaterials().get(0).getWeight();
+      }
+
       orderDetailProductDTOS.add(
           OrderDetailProductDTO.builder()
               .name(order.getProduct().getProductName())
               .code(order.getProduct().getProductCode())
+              .categoryType(order.getProduct().getCategory().getCategoryType())
               .size(order.getProduct().getSize())
               .price(order.getPrice())
+              .quantity(quantity)
               .build());
     }
 

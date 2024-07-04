@@ -1,6 +1,6 @@
 package com.swp391.JewelrySalesSystem.repository;
 
-import com.swp391.JewelrySalesSystem.entity.Material;
+import com.swp391.JewelrySalesSystem.entity.ProductMaterial;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,9 +9,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface MaterialRepository extends JpaRepository<Material, Long> {
-  @Modifying
+public interface ProductMaterialRepository extends JpaRepository<ProductMaterial, Long> {
   @Transactional
-  @Query(value = "update materials m set is_active = false where m.id = :id", nativeQuery = true)
-  void deactivateMaterialById(@Param("id") Long id);
+  @Modifying
+  @Query(
+      value = "delete from product_materials pm where pm.product_id = :productId",
+      nativeQuery = true)
+  void deleteByProductId(@Param("productId") Long productId);
 }

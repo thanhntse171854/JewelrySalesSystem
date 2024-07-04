@@ -23,6 +23,9 @@ public class ProductCategory extends BaseEntity implements Serializable {
   @Enumerated(EnumType.STRING)
   private CategoryType categoryType;
 
+  @Column(name = "buy_back_promotion", nullable = false)
+  private Float buyBackPromotion;
+
   @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<Product> products;
 }

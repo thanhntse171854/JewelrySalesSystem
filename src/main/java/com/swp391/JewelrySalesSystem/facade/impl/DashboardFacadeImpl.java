@@ -5,16 +5,11 @@ import com.swp391.JewelrySalesSystem.entity.User;
 import com.swp391.JewelrySalesSystem.enums.ErrorCode;
 import com.swp391.JewelrySalesSystem.exception.DashboardException;
 import com.swp391.JewelrySalesSystem.facade.DashboardFacade;
-import com.swp391.JewelrySalesSystem.response.BaseResponse;
-import com.swp391.JewelrySalesSystem.response.CategoryTypeMostOrderResponse;
-import com.swp391.JewelrySalesSystem.response.StaffCreateMostOrderResponse;
+import com.swp391.JewelrySalesSystem.response.*;
 import com.swp391.JewelrySalesSystem.service.OrderDetailService;
 import com.swp391.JewelrySalesSystem.service.OrderService;
 import com.swp391.JewelrySalesSystem.service.UserService;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -138,5 +133,55 @@ public class DashboardFacadeImpl implements DashboardFacade {
       if (order.getDeliveryStatus().isSuccess()) totalAmount += order.getTotalAmount();
     }
     return totalAmount;
+  }
+
+  @Override
+  public BaseResponse<List<TotalAmountMonthResponse>> getSalesTotalAmount(int year) {
+    List<TotalAmountMonthResponse> monthlyTotals = new ArrayList<>();
+
+    for (int month = 1; month <= 12; month++) {
+      LocalDate startOfMonth = LocalDate.of(year, month, 1);
+      LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
+
+      LocalDateTime startDateTime = startOfMonth.atStartOfDay();
+      LocalDateTime endDateTime = endOfMonth.atTime(LocalTime.MAX);
+
+      long startDate = startDateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+      long endDate = endDateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+
+      Float totalAmount = totalOrder(startDate, endDate);
+      TotalAmountMonthResponse response =
+          TotalAmountMonthResponse.builder().month(month).totalAmount(totalAmount).build();
+
+      monthlyTotals.add(response);
+    }
+
+    return BaseResponse.build(monthlyTotals, true);
+  }
+
+  @Override
+  public BaseResponse<List<TotalAmountDayResponse>> getSalesTotalAmountsThisWeek() {
+    List<TotalAmountDayResponse> dailyTotals = new ArrayList<>();
+
+    LocalDate startDate = LocalDate.now().with(DayOfWeek.MONDAY);
+    LocalDate endDate = startDate.plusDays(6);
+
+    while (!startDate.isAfter(endDate)) {
+      LocalDateTime startOfDay = startDate.atStartOfDay();
+      LocalDateTime endOfDay = startDate.atTime(LocalTime.MAX);
+
+      long startTime = startOfDay.toInstant(ZoneOffset.UTC).toEpochMilli();
+      long endTime = endOfDay.toInstant(ZoneOffset.UTC).toEpochMilli();
+
+      Float totalAmount = totalOrder(startTime, endTime);
+      TotalAmountDayResponse response =
+          TotalAmountDayResponse.builder().date(startDate).totalAmount(totalAmount).build();
+
+      dailyTotals.add(response);
+
+      startDate = startDate.plusDays(1);
+    }
+
+    return BaseResponse.build(dailyTotals, true);
   }
 }

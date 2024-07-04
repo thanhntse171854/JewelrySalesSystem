@@ -1,8 +1,6 @@
 package com.swp391.JewelrySalesSystem.facade;
 
-import com.swp391.JewelrySalesSystem.response.BaseResponse;
-import com.swp391.JewelrySalesSystem.response.CategoryTypeMostOrderResponse;
-import com.swp391.JewelrySalesSystem.response.StaffCreateMostOrderResponse;
+import com.swp391.JewelrySalesSystem.response.*;
 import java.util.List;
 
 public interface DashboardFacade {
@@ -17,4 +15,8 @@ public interface DashboardFacade {
   BaseResponse<StaffCreateMostOrderResponse> getStaffCreateMostOrderThisMonth();
 
   BaseResponse<List<CategoryTypeMostOrderResponse>> getCategoryTypeMostOrder();
+
+  BaseResponse<List<TotalAmountMonthResponse>> getSalesTotalAmount(int years);
+
+  BaseResponse<List<TotalAmountDayResponse>> getSalesTotalAmountsThisWeek();
 }

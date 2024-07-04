@@ -124,4 +124,16 @@ public class PurchaseController {
   public BaseResponse<Void> deletePreOrderByKey(@PathVariable("code") String code) {
     return this.purchaseFacade.deleteOderByKey(code);
   }
+
+  @GetMapping("/staff/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Get Purchase Order By Seller Id",
+      tags = {"Purchase Order APIs"})
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("isAuthenticated()")
+  public BaseResponse<List<PurchaseOrderResponse>> getAllPurchaseOrderBySeller(
+      @PathVariable("id") Long id) {
+    return this.purchaseFacade.getAllPurchaseOrderBySeller(id);
+  }
 }

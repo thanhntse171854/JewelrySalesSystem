@@ -13,6 +13,8 @@ public interface ProductFacade {
 
   BaseResponse<ProductDetailResponse> findById(Long id);
 
+  BaseResponse<ProductDetailResponse> findByIdForAll(Long id);
+
   BaseResponse<List<CategoryResponse>> getCategoriesByType(CategoryType categoryType);
 
   BaseResponse<Void> createProduct(UpsertProductRequest request);

@@ -29,6 +29,7 @@ public class ProductFacadeImpl implements ProductFacade {
   private final MaterialService materialService;
   private final ProductGemService productGemService;
   private final CloudinaryService cloudinaryService;
+  private final ProductMaterialService productMaterialService;
 
   @Override
   public BaseResponse<PaginationResponse<List<ProductResponse>>> findByFilter(
@@ -43,6 +44,13 @@ public class ProductFacadeImpl implements ProductFacade {
   @Override
   public BaseResponse<ProductDetailResponse> findById(Long id) {
     Product product = productService.findByProductIdAndActive(id);
+    ProductDetailResponse productDetailResponse = buildProductDetailResponse(product);
+    return BaseResponse.build(productDetailResponse, true);
+  }
+
+  @Override
+  public BaseResponse<ProductDetailResponse> findByIdForAll(Long id) {
+    Product product = productService.findById(id);
     ProductDetailResponse productDetailResponse = buildProductDetailResponse(product);
     return BaseResponse.build(productDetailResponse, true);
   }
@@ -349,7 +357,7 @@ public class ProductFacadeImpl implements ProductFacade {
                 .material(material)
                 .weight(materialP.getWeight())
                 .build());
-
+        productMaterialService.deleteProductById(product.getId());
         product.addProductMaterial(list);
         ;
       }
@@ -377,7 +385,7 @@ public class ProductFacadeImpl implements ProductFacade {
                 .material(material)
                 .weight(materialP.getWeight())
                 .build());
-
+        productMaterialService.deleteProductById(product.getId());
         product.addProductMaterial(list);
       }
     }

@@ -1,6 +1,7 @@
 package com.swp391.JewelrySalesSystem.controller;
 
 import com.swp391.JewelrySalesSystem.facade.CustomerFacade;
+import com.swp391.JewelrySalesSystem.request.CustomerInfoRequest;
 import com.swp391.JewelrySalesSystem.response.BaseResponse;
 import com.swp391.JewelrySalesSystem.response.CustomerResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,5 +37,17 @@ public class CustomerController {
   //  @PreAuthorize("hasRole('ROLE_MANAGER')")
   public BaseResponse<List<CustomerResponse>> getAllCustomer() {
     return this.customerFacade.getAllCustomer();
+  }
+
+  @PutMapping("/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Update info customer by id",
+      tags = {"Customer APIs"})
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("hasRole('ROLE_MANAGER')")
+  public BaseResponse<CustomerResponse> updateInfoCustomer(
+      @PathVariable("id") Long id, @RequestBody CustomerInfoRequest request) {
+    return this.customerFacade.updateInfo(id, request);
   }
 }
