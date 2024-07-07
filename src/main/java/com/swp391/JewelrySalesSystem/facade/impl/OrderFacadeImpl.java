@@ -210,7 +210,7 @@ public class OrderFacadeImpl implements OrderFacade {
               .code(order.getProduct().getProductCode())
               .categoryType(order.getProduct().getCategory().getCategoryType())
               .size(order.getProduct().getSize())
-              .price(order.getPrice())
+              .price(String.format("%.0f", order.getPrice()))
               .quantity(quantity)
               .build());
     }
@@ -234,7 +234,7 @@ public class OrderFacadeImpl implements OrderFacade {
             .customerPhone(orders.getCustomer().getPhone())
             .customerAddress(orders.getCustomer().getAddress())
             .discount(orders.getDiscount())
-            .totalAmount(orders.getTotalAmount())
+            .totalAmount(String.format("%.0f", orders.getTotalAmount()))
             .paymentMethod(orders.getPaymentMethod())
             .list(orderDetailProductDTOS)
             .createAt(formattedDate)

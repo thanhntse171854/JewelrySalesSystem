@@ -34,7 +34,9 @@ public enum ErrorCode {
   PHONE_EXIST("1024", "Phone number already exists"),
   INVALID_CONFIRM_PASSWORD("1025", "Password and confirm password does not match"),
   CUSTOMER_NOT_FOUND("1026", "Customer not found"),
-  CREATE_MATERIAL_NULL("1027", "Material name is null");
+  CREATE_MATERIAL_NULL("1027", "Material name is null"),
+  MATERIAL_PRICE_LIST("1028", "Price List Id not found"),
+  CREATE_PRICE_WRONG("1029", "Effect date must be in the future.");
 
   private final String code;
   private final String message;

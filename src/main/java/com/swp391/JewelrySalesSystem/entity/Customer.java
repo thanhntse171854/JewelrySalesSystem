@@ -45,11 +45,11 @@ public class Customer extends BaseEntity implements Serializable {
   private List<PurchaseOrder> purchaseOrders = new ArrayList<>();
 
   public void updateDiscount(Float total) {
-    if (total >= 15000) {
+    if (total >= 300000000) {
       this.percentDiscount = 15.0f;
-    } else if (total >= 10000) {
+    } else if (total >= 200000000) {
       this.percentDiscount = 10.0f;
-    } else if (total >= 5000) {
+    } else if (total >= 100000000) {
       this.percentDiscount = 5.0f;
     } else {
       this.percentDiscount = 0.0f;

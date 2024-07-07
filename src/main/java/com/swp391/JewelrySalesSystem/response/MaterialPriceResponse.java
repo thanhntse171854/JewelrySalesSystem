@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class MaterialPriceResponse {
+  private Long id;
   private Long materialId;
   private String materialName;
   private Float materialBuyPrice;

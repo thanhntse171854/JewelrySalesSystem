@@ -29,4 +29,17 @@ public interface GemPriceRepository extends JpaRepository<GemPriceList, Long> {
       @Param("gemId") Long gemId, @Param("currentTimestamp") long currentTimestamp);
 
   List<GemPriceList> findAll(Specification<GemPriceList> spec);
+
+  @Query(
+      value =
+          "SELECT gpl.* "
+              + "FROM gem_price_list gpl "
+              + "INNER JOIN gems g ON gpl.origin = g.origin "
+              + "AND gpl.color = g.color "
+              + "AND gpl.clarity = g.clarity "
+              + "AND gpl.cut = g.cut "
+              + "AND gpl.carat = g.carat "
+              + "WHERE  g.id = :gemId ",
+      nativeQuery = true)
+  List<GemPriceList> findGemPriceListByGemIdNotEffectDate(@Param("gemId") Long gemId);
 }

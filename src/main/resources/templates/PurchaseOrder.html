@@ -163,12 +163,12 @@
                 <span th:if="${product.clarity != null}"> - Clarity: <span th:text="${product.clarity}"></span></span>
                 <span th:if="${product.color != null}"> - Color: <span th:text="${product.color}"></span></span>
             </td>
-            <td th:text="'$' + ${product.price}"></td>
+            <td th:text="${product.price + 'đ'}"></td>
         </tr>
         </tbody>
     </table>
     <div class="total-section">
-        <p>Total Amount: <span th:text="${'$' + order.totalPrice}">________ </span></p>
+        <p>Total Amount: <span th:text="${order.totalPrice + 'đ'}">________ </span></p>
     </div>
     <div class="sign-section">
         <div class="sign-box">

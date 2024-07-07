@@ -17,7 +17,7 @@ public class OrderDetailDTO {
   private String customerAddress;
   private String customerPhone;
   private Float discount;
-  private Float totalAmount;
+  private String totalAmount;
   private PaymentMethod paymentMethod;
   private List<OrderDetailProductDTO> list;
   private String createAt;

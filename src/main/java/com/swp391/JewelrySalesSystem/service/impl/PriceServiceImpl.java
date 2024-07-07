@@ -72,4 +72,38 @@ public class PriceServiceImpl implements PriceService {
     }
     return gemRepository.findAll(spec);
   }
+
+  @Override
+  public MaterialPriceList findMaterialPriceListById(Long id) {
+    return materialPriceRepository
+        .findById(id)
+        .orElseThrow(() -> new PriceListException(ErrorCode.MATERIAL_PRICE_LIST));
+  }
+
+  @Override
+  public List<MaterialPriceList> findMaterialNotEffectDate(Long materialId) {
+    return materialPriceRepository.findMaterialPriceListNotEffectDate(materialId);
+  }
+
+  @Override
+  public List<GemPriceList> findGemNotEffectDate(Long gem) {
+    return gemPriceRepository.findGemPriceListByGemIdNotEffectDate(gem);
+  }
+
+  @Override
+  public GemPriceList findGemPriceListById(Long id) {
+    return gemPriceRepository
+        .findById(id)
+        .orElseThrow(() -> new PriceListException(ErrorCode.MATERIAL_PRICE_LIST));
+  }
+
+  @Override
+  public void saveMaterial(MaterialPriceList materialPriceList) {
+    materialPriceRepository.save(materialPriceList);
+  }
+
+  @Override
+  public void saveGem(GemPriceList gemPriceList) {
+    gemPriceRepository.save(gemPriceList);
+  }
 }

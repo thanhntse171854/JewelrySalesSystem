@@ -1,6 +1,7 @@
 package com.swp391.JewelrySalesSystem.repository;
 
 import com.swp391.JewelrySalesSystem.entity.MaterialPriceList;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,12 @@ public interface MaterialPriceRepository extends JpaRepository<MaterialPriceList
       nativeQuery = true)
   Optional<MaterialPriceList> findMaterialPriceList(
       @Param("materialId") Long id, @Param("currentTimestamp") long currentTimestamp);
+
+  @Query(
+      value =
+          "SELECT mpl.* "
+              + "FROM material_price_list mpl "
+              + "WHERE mpl.material_id = :materialId ",
+      nativeQuery = true)
+  List<MaterialPriceList> findMaterialPriceListNotEffectDate(@Param("materialId") Long id);
 }

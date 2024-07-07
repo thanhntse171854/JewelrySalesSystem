@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class GemPriceResponse {
+  private Long id;
   private Long gemId;
   private String origin;
   private String color;

@@ -17,7 +17,7 @@ public class PurchaseOrderRequest {
   private String address;
   private Long birthday;
   private String phone;
-  private boolean isProductStore;
+  private boolean productStore;
   private List<PurchaseOrderDetailRequest> list;
   private Float totalPrice;
 }

@@ -15,7 +15,7 @@ public class OrderDetailProductDTO {
   private String code;
   private String name;
   private CategoryType categoryType;
-  private Float price;
+  private String price;
   private Size size;
   private float quantity;
 }
