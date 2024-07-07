@@ -214,7 +214,7 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
                 .clarity(puchase.getClarity())
                 .carat(puchase.getCarat())
                 .weight(puchase.getWeight())
-                .price(puchase.getPrice())
+                .price(String.format("%.0f", puchase.getPrice()))
                 .size("NONE")
                 .build());
       } else {
@@ -224,7 +224,7 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
                 .productName(product.getProductName())
                 .productCode(product.getProductCode())
                 .size(product.getSize().toString())
-                .price(puchase.getPrice())
+                .price(String.format("%.0f", puchase.getPrice()))
                 .build());
       }
     }
@@ -241,7 +241,7 @@ public class PurchaseFacadeImpl implements PurchaseFacade {
             .customerName(purchaseOrder.getCustomer().getName())
             .customerPhone(purchaseOrder.getCustomer().getPhone())
             .customerAddress(purchaseOrder.getCustomer().getAddress())
-            .totalPrice(purchaseOrder.getTotalPrice())
+            .totalPrice(String.format("%.0f", purchaseOrder.getTotalPrice()))
             .paymentMethod(purchaseOrder.getPaymentMethod())
             .list(list)
             .createAt(formattedDate)

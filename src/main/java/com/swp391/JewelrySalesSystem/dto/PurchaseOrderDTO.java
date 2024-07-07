@@ -13,7 +13,7 @@ public class PurchaseOrderDTO {
   private String customerName;
   private String customerAddress;
   private String customerPhone;
-  private Float totalPrice;
+  private String totalPrice;
   private PaymentMethod paymentMethod;
   private List<PurchaseOrderDetailDTO> list;
   private String createAt;

@@ -9,7 +9,19 @@ import java.util.List;
 public interface PriceService {
   MaterialPriceList findMaterialPriceList(Long materialId);
 
+  MaterialPriceList findMaterialPriceListById(Long id);
+
+  List<MaterialPriceList> findMaterialNotEffectDate(Long materialId);
+
+  List<GemPriceList> findGemNotEffectDate(Long gem);
+
   GemPriceList findGemPriceList(Gem gem);
 
+  GemPriceList findGemPriceListById(Long id);
+
   List<Gem> filterGemPriceLists(GemFilterRequest request);
+
+  void saveMaterial(MaterialPriceList materialPriceList);
+
+  void saveGem(GemPriceList gemPriceList);
 }

@@ -38,4 +38,13 @@ public class GemPriceList extends BaseEntity implements Serializable {
 
   @Column(name = "effect_date", nullable = false)
   private Long effectDate;
+
+  public void updatePrice(Float sellPrice, Float buyPrice) {
+    if (sellPrice != null) {
+      this.sellPrice = sellPrice;
+    }
+    if (buyPrice != null) {
+      this.buyPrice = buyPrice;
+    }
+  }
 }

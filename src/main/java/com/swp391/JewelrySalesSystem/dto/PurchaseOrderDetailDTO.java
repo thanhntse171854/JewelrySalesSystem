@@ -18,6 +18,6 @@ public class PurchaseOrderDetailDTO {
   private String color;
   private String clarity;
   private Float carat;
-  private Float price;
+  private String price;
   private String size;
 }
