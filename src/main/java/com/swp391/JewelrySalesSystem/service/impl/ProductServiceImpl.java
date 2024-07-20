@@ -8,6 +8,7 @@ import com.swp391.JewelrySalesSystem.repository.ProductRepository;
 import com.swp391.JewelrySalesSystem.request.ProductCriteria;
 import com.swp391.JewelrySalesSystem.service.ProductService;
 import com.swp391.JewelrySalesSystem.specifications.ProductSpecifications;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -74,5 +75,10 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public void save(Product product) {
     productRepository.save(product);
+  }
+
+  @Override
+  public List<Product> findAll() {
+    return productRepository.findAll();
   }
 }

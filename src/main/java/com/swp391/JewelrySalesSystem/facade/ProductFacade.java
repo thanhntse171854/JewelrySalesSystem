@@ -29,4 +29,6 @@ public interface ProductFacade {
       MultipartFile image2,
       MultipartFile image3,
       MultipartFile image4);
+
+  BaseResponse<List<ProductResponse>> findAll();
 }

@@ -10,15 +10,17 @@ import com.swp391.JewelrySalesSystem.facade.OrderFacade;
 import com.swp391.JewelrySalesSystem.request.OrderCriteria;
 import com.swp391.JewelrySalesSystem.request.PaymentRequest;
 import com.swp391.JewelrySalesSystem.request.UpsertOrderRequest;
+import com.swp391.JewelrySalesSystem.request.VnPayCallbackParamRequest;
 import com.swp391.JewelrySalesSystem.response.*;
 import com.swp391.JewelrySalesSystem.service.*;
+import jakarta.servlet.http.HttpServletRequest;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,6 +42,7 @@ public class OrderFacadeImpl implements OrderFacade {
   private final SpringTemplateEngine springTemplateEngine;
   private final DataMapperService dataMapperService;
   private final DocumentService documentService;
+  private final VnPayService vnPayService;
 
   @Override
   public BaseResponse<Void> orderProduct(UpsertOrderRequest orderRequest) {
@@ -74,9 +77,8 @@ public class OrderFacadeImpl implements OrderFacade {
   }
 
   @Override
-  public BaseResponse<PaginationResponse<List<OrderResponse>>> getOrderProductBySeller(
-      OrderCriteria orderCriteria) {
-    var orders = orderService.findByFilter(orderCriteria);
+  public BaseResponse<List<OrderResponse>> getOrderProductBySeller(OrderCriteria orderCriteria) {
+    var orders = orderService.findOrderBySeller(orderCriteria.getId());
     List<OrderResponse> list = new ArrayList<>();
     for (var order : orders) {
       list.add(
@@ -92,12 +94,14 @@ public class OrderFacadeImpl implements OrderFacade {
               .createAt(order.getCreatedAt())
               .build());
     }
-    int currentPage = (orderCriteria.getCurrentPage() == null) ? 1 : orderCriteria.getCurrentPage();
-    return BaseResponse.build(PaginationResponse.build(list, orders, currentPage), true);
+    return BaseResponse.build(list, true);
   }
 
   @Override
-  public BaseResponse<Void> payment(PaymentRequest request) {
+  public BaseResponse<String> payment(
+      PaymentRequest request, HttpServletRequest httpServletRequest) {
+    String paymentUrl = null;
+
     Orders orders = orderService.findOrderById(request.getOrderId());
     Customer customer = customerService.findByPhone(request.getCustomerPhone());
     Payment payment = paymentService.findByOrderId(request.getOrderId());
@@ -106,15 +110,63 @@ public class OrderFacadeImpl implements OrderFacade {
     customer.addAddress(request.getAddress());
     customer.addBirthDate(request.getDateOfBirth());
 
-    if (request.getPaymentMethod().isCash()) {
-      Float totalAmount = request.getAmount() + customer.getTotalAmountPurchased();
-      customer.updateDiscount(totalAmount);
-      customer.updateTotalAmountPurchase(totalAmount);
+    if (request.getPaymentMethod().isCredit()) {
+      Long amount = (long) (request.getAmount() * 100L);
+      var vnpParams =
+          vnPayService.buildVnPayParams(amount, request.getOrderCode(), httpServletRequest);
+      List<String> fieldNames = new ArrayList<>(vnpParams.keySet());
+      Collections.sort(fieldNames);
+      StringBuilder hashData = new StringBuilder();
+      StringBuilder query = new StringBuilder();
+      Iterator itr = fieldNames.iterator();
 
-      orders.updatePaymentMethod(request.getPaymentMethod());
-      orders.updateAmount(request.getAmount());
-      orderService.save(orders);
+      while (itr.hasNext()) {
+        String fieldName = (String) itr.next();
+        String fieldValue = vnpParams.get(fieldName);
+        if ((fieldValue != null) && (!fieldValue.isEmpty())) {
+
+          hashData.append(fieldName);
+          hashData.append('=');
+          hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
+
+          query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII));
+          query.append('=');
+          query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
+          if (itr.hasNext()) {
+            query.append('&');
+            hashData.append('&');
+          }
+        }
+      }
+      String queryUrl = query.toString();
+      String vnpSecureHash = vnPayService.hmacSHA512(hashData.toString());
+      queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
+      paymentUrl = vnPayService.getPaymentUrl(queryUrl);
+
+      if (payment == null) {
+        payment =
+            Payment.builder()
+                .paymentCode("PM" + generatePaymentCode())
+                .order(orders)
+                .status(PaymentStatus.PENDING)
+                .payemntType(PayemntType.ORDER_SELL)
+                .totalPrice(request.getAmount())
+                .build();
+      } else {
+        payment.updateStatus(PaymentStatus.SUCCESS);
+      }
+      paymentService.savePayment(payment);
+
+      return BaseResponse.build(paymentUrl, true);
     }
+
+    Float totalAmount = request.getAmount() + customer.getTotalAmountPurchased();
+    customer.updateDiscount(totalAmount);
+    customer.updateTotalAmountPurchase(totalAmount);
+
+    orders.updatePaymentMethod(request.getPaymentMethod());
+    orders.updateAmount(request.getAmount());
+    orderService.save(orders);
 
     customerService.save(customer);
 
@@ -137,7 +189,8 @@ public class OrderFacadeImpl implements OrderFacade {
         Product product = productService.findByProductIdAndActive(order.getProduct().getId());
         productService.deactivateProduct(product.getId());
       }
-      return BaseResponse.ok();
+
+      return BaseResponse.build("SUCCESS", true);
     } else {
       if (payment != null) {
         payment.updateStatus(PaymentStatus.PENDING);
@@ -145,6 +198,32 @@ public class OrderFacadeImpl implements OrderFacade {
       }
       throw new PaymentException(ErrorCode.PAYMENT_FAIL);
     }
+  }
+
+  @Override
+  public BaseResponse<Void> paymentCallBack(VnPayCallbackParamRequest request) {
+    Orders orders = orderService.findByOrderCode(request.getVnp_TxnRef());
+    for (var order : orders.getOrderDetails()) {
+      Product product = productService.findByProductIdAndActive(order.getProduct().getId());
+      productService.deactivateProduct(product.getId());
+    }
+    Payment payment = paymentService.findByOrderId(orders.getId());
+    if (payment == null) throw new RuntimeException();
+
+    payment.updateStatus(PaymentStatus.SUCCESS);
+    paymentService.savePayment(payment);
+
+    Customer customer = orders.getCustomer();
+
+    Float totalAmount =
+        Long.parseLong(request.getVnp_Amount()) + customer.getTotalAmountPurchased();
+    customer.updateDiscount(totalAmount);
+    customer.updateTotalAmountPurchase(totalAmount);
+
+    orders.updatePaymentMethod(PaymentMethod.CREDIT);
+    orderService.save(orders);
+    customerService.save(customer);
+    return BaseResponse.ok();
   }
 
   @Override
@@ -211,7 +290,7 @@ public class OrderFacadeImpl implements OrderFacade {
               .categoryType(order.getProduct().getCategory().getCategoryType())
               .size(order.getProduct().getSize())
               .price(String.format("%.0f", order.getPrice()))
-              .quantity(quantity)
+              .quantity(1f)
               .build());
     }
 

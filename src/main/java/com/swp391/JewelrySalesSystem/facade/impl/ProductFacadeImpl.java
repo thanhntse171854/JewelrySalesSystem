@@ -436,4 +436,11 @@ public class ProductFacadeImpl implements ProductFacade {
     productService.save(product);
     return BaseResponse.ok();
   }
+
+  @Override
+  public BaseResponse<List<ProductResponse>> findAll() {
+    List<Product> list = productService.findAll();
+    List<ProductResponse> productResponses = list.stream().map(this::buildProductResponse).toList();
+    return BaseResponse.build(productResponses, true);
+  }
 }

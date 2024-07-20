@@ -45,6 +45,17 @@ public class ProductController {
     return this.productFacade.findByFilter(criteria);
   }
 
+  @GetMapping("/all")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Get all product",
+      tags = {"Product APIs"})
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("isAuthenticated()")
+  public BaseResponse<List<ProductResponse>> getAllProduct() {
+    return this.productFacade.findAll();
+  }
+
   @GetMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
