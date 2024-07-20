@@ -4,9 +4,11 @@ import com.swp391.JewelrySalesSystem.facade.OrderFacade;
 import com.swp391.JewelrySalesSystem.request.OrderCriteria;
 import com.swp391.JewelrySalesSystem.request.PaymentRequest;
 import com.swp391.JewelrySalesSystem.request.UpsertOrderRequest;
+import com.swp391.JewelrySalesSystem.request.VnPayCallbackParamRequest;
 import com.swp391.JewelrySalesSystem.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Nullable;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -70,8 +72,20 @@ public class OrderController {
       tags = {"Sell Order APIs"})
   //  @SecurityRequirement(name = "Bearer Authentication")
   //  @PreAuthorize("hasRole('ROLE_CASHIER_STAFF')")
-  public BaseResponse<Void> payment(@RequestBody PaymentRequest request) {
-    return this.orderFacade.payment(request);
+  public BaseResponse<String> payment(
+      @RequestBody PaymentRequest request, HttpServletRequest httpRequest) {
+    return this.orderFacade.payment(request, httpRequest);
+  }
+
+  @GetMapping("/callback")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Payment order",
+      tags = {"Sell Order APIs"})
+  //  @SecurityRequirement(name = "Bearer Authentication")
+  //  @PreAuthorize("hasRole('ROLE_CASHIER_STAFF')")
+  public BaseResponse<Void> paymentCallBack(VnPayCallbackParamRequest request) {
+    return this.orderFacade.paymentCallBack(request);
   }
 
   @PostMapping("/delivery/{orderCode}")
@@ -92,8 +106,7 @@ public class OrderController {
       tags = {"Sell Order APIs"})
   //  @SecurityRequirement(name = "Bearer Authentication")
   //  @PreAuthorize("isAuthenticated()")
-  public BaseResponse<PaginationResponse<List<OrderResponse>>> getOrderBySeller(
-      @Nullable OrderCriteria orderCriteria) {
+  public BaseResponse<List<OrderResponse>> getOrderBySeller(@Nullable OrderCriteria orderCriteria) {
 
     return this.orderFacade.getOrderProductBySeller(orderCriteria);
   }
